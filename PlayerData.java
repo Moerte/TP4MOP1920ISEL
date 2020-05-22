@@ -21,7 +21,6 @@ import tps.tp4.pieces.Spider;
 
 /**
  * class that keep and control the data from one player
- * 
  */
 public class PlayerData {
 
@@ -188,7 +187,7 @@ public class PlayerData {
 }
 
 /**
- * classe que suporta as labels das peças iniciais de cada jogador
+ * classe que suporta as labels das peï¿½as iniciais de cada jogador
  */
 class HiveLabel extends JLabel {
 	private static final long serialVersionUID = 1L;
