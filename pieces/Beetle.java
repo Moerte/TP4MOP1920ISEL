@@ -14,8 +14,7 @@ public class Beetle extends Piece {
 	 * constructor
 	 */
 	public Beetle(Game game, boolean isFromPlayerA) {
-		super("", null, null, false);
-		// TODO
+		super("Beetle", color, game, isFromPlayerA);
 	}
 
 	/**

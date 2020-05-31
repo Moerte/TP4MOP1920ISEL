@@ -17,8 +17,7 @@ public class Grasshopper extends Piece {
 	 * constructor
 	 */
 	public Grasshopper(Game game, boolean isFromPlayerA) {
-		super("", null, null, false);
-		// TODO
+		super("Grasshopper", color, game, isFromPlayerA);
 	}
 
 	/**

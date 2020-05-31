@@ -19,8 +19,7 @@ public class Ant extends Piece {
 	 * constructor
 	 */
 	public Ant(Game game, boolean isFromPlayerA) {
-		super("", null, null, false);
-		// TODO
+		super("Ant", color, game, isFromPlayerA);
 	}
 
 	/**

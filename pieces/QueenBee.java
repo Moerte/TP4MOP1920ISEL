@@ -14,8 +14,7 @@ public class QueenBee extends Piece {
 	 * constructor
 	 */
 	public QueenBee(Game game, boolean isFromPlayerA) {
-		super("", color, null, false);
-		// TODO
+		super("QueenBee", color, game, isFromPlayerA);
 	}
 
 	/**

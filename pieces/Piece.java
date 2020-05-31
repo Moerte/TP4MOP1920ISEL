@@ -22,7 +22,10 @@ public abstract class Piece {
 	 * constructor
 	 */
 	public Piece(String name, Color color, Game game, boolean isFromPlayerA) {
-		// TODO
+		// TODO Faltam as validações
+		this.name = name;
+		this.game = game;
+		this.isFromPlayerA = isFromPlayerA;
 		this.color = color;
 	}
 
@@ -38,15 +41,14 @@ public abstract class Piece {
 	 * get color
 	 */
 	public Color getColor() {
-		// TODO
-		return color;
+		return this.color;
 	}
 
 	/**
 	 * get if piece if from player A or not
 	 */
 	public boolean isFromPlayerA() {
-		// TODO
+		if(this.isFromPlayerA) return true; 
 		return false;
 	}
 
@@ -54,23 +56,22 @@ public abstract class Piece {
 	 * set xy
 	 */
 	public void setXY(int x, int y) {
-		// TODO
+		this.x = x;
+		this.y = y;
 	}
 
 	/**
 	 * get x
 	 */
 	public int getX() {
-		// TODO
-		return 0;
+		return this.x;
 	}
 
 	/**
 	 * set y
 	 */
 	public int getY() {
-		// TODO
-		return 0;
+		return this.y;
 	}
 
 	/**
