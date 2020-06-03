@@ -3,13 +3,20 @@ package tps.tp4;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
+import javax.swing.border.LineBorder;
 
+import classcode.p15Swing.p02buildedLayouts.ProportionalLayout;
 import tps.layouts.CenterLayout;
 import tps.tp4.pieces.Piece;
 import tps.tp4.pieces.Spider;
@@ -91,14 +98,20 @@ public class Game extends JFrame {
 	 * load resources: fonts, images, sounds
 	 */
 	private void loadResources() {
-		// TODO
+		String fontType = "Comic Sans MS";
+		int size = 40;
+		Font f1 = new Font(fontType, Font.BOLD, size);
+		setFont(f1);
 	}
 
 	/**
 	 * the JFrame initialization method
 	 */
 	private void init() {
+		setTitle("Hive Game");
 		setSize(800, 600);
+
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setLayout(new CenterLayout());
 
 		setLocationRelativeTo(null);
@@ -108,8 +121,82 @@ public class Game extends JFrame {
 
 		// add a spider - just to check
 		Spider s = new Spider(this, true);
-		getBoard().addPiece(s, 10, 5);
+		getBoard().addPiece(s, 4, 5);
+		
+		mainLabel = new JLabel("Hello!!!");
+		mainLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		mainLabel.setBackground(Color.CYAN);
+		add(mainLabel, ProportionalLayout.NORTH);
+		
+		
+		// Playable Buttons
+		controlPanel = new JPanel();
+		controlPanel.setSize(700, 10);
+		
+		ActionListener al = new ActionListener() {
 
+			public void actionPerformed(ActionEvent e) {
+				switch (e.getActionCommand()) {
+				case "move_up": moveHiveUp();
+					break;
+				case "move_down": moveDown();
+					break;
+				case "move_no": moveNO();
+					break;
+				case "move_ne": moveNE();
+					break;
+				case "move_se": moveSE();
+					break;
+				case "move_so": moveSO();
+					break;
+				case "change_player": changePlayer();
+					break;
+				}
+			}
+		};
+
+		bn_moveUp = new JButton("Move UP");
+		bn_moveUp.setActionCommand("move_up");
+		bn_moveUp.addActionListener(al);
+		controlPanel.add(bn_moveUp);
+
+		bn_moveDown = new JButton("Move Down");
+		bn_moveDown.setActionCommand("move_down");
+		bn_moveDown.addActionListener(al);
+		controlPanel.add(bn_moveDown);
+
+		bn_moveNO = new JButton("Move NO");
+		bn_moveNO.setActionCommand("move_no");
+		bn_moveNO.addActionListener(al);
+		controlPanel.add(bn_moveNO);
+
+		bn_moveNE = new JButton("Move NE");
+		bn_moveNE.setActionCommand("move_ne");
+		bn_moveNE.addActionListener(al);
+		controlPanel.add(bn_moveNE);
+
+		bn_moveSE = new JButton("Move SE");
+		bn_moveSE.setActionCommand("move_se");
+		bn_moveSE.addActionListener(al);
+		controlPanel.add(bn_moveSE);
+
+		bn_moveSO = new JButton("Move SO");
+		bn_moveSO.setActionCommand("move_so");
+		bn_moveSO.addActionListener(al);
+		controlPanel.add(bn_moveSO);
+
+		bn_changePlayer = new JButton("Change Player");
+		bn_changePlayer.setActionCommand("change_player");
+		bn_changePlayer.addActionListener(al);
+		controlPanel.add(bn_changePlayer);
+
+		add(controlPanel, BorderLayout.SOUTH);
+		// End Playable buttons
+		
+		// Players
+		playerAData = new PlayerData(this, isPlayerAToPlay);
+		
+		playerBData = new PlayerData(this, isPlayerAToPlay);
 		// TODO
 
 		setVisible(true);
@@ -227,8 +314,8 @@ public class Game extends JFrame {
 	/**
 	 * check if can move physically from x,y in to the direction received
 	 * 
-	 * By physical we mean, that the piece has physical space to move. A piece,
-	 * with the NE and NO places occupied, cannot move to N.
+	 * By physical we mean, that the piece has physical space to move. A piece, with
+	 * the NE and NO places occupied, cannot move to N.
 	 */
 	public boolean canPhysicallyMoveTo(int x, int y, Direction d) {
 		// TODO
@@ -284,7 +371,7 @@ public class Game extends JFrame {
 	 * move hive UP, if it can be moved
 	 */
 	private void moveHiveUp() {
-		// TODO
+		System.out.println("teste");
 
 	}
 

@@ -69,7 +69,7 @@ public class Board extends JPanel {
 
 		// added one queen, to have some visualization
 		QueenBee q = new QueenBee(game, true);
-		addPiece(q, 10, 7);
+		addPiece(q, 1,7);
 
 	}
 
