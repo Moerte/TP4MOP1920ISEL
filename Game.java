@@ -5,13 +5,22 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
@@ -64,6 +73,8 @@ public class Game extends JFrame {
 	private JButton bn_moveSO;
 	private JButton bn_changePlayer;
 
+	private JMenuBar menuBar;
+
 	private boolean placingQueenBee = false;
 	private boolean isPlayerAToPlay;
 	private PlayerData currentPlayerData;
@@ -101,7 +112,7 @@ public class Game extends JFrame {
 		String fontType = "Comic Sans MS";
 		int size = 40;
 		Font f1 = new Font(fontType, Font.BOLD, size);
-		setFont(f1);
+		// setFont(f1);
 	}
 
 	/**
@@ -109,7 +120,7 @@ public class Game extends JFrame {
 	 */
 	private void init() {
 		setTitle("Hive Game");
-		setSize(800, 600);
+		setSize(900, 600);
 
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setLayout(new CenterLayout());
@@ -122,38 +133,61 @@ public class Game extends JFrame {
 		// add a spider - just to check
 		Spider s = new Spider(this, true);
 		getBoard().addPiece(s, 4, 5);
-		
-		mainLabel = new JLabel("Hello!!!");
+
+		JPanel panelTop = new JPanel(new BorderLayout());
+		panelTop.setBackground(Color.GRAY);
+
+		String fontType = "Comic Sans MS";
+		int size = 25;
+		Font f1 = new Font(fontType, Font.BOLD, size);
+
+		// Main Label
+		mainLabel = new JLabel("HIVE GAME: Current Player -> " + getPlayerData(isPlayerAToPlay));
+		mainLabel.setFont(f1);
 		mainLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		mainLabel.setBackground(Color.CYAN);
-		add(mainLabel, ProportionalLayout.NORTH);
-		
-		
+		panelTop.add(mainLabel, BorderLayout.CENTER);
+		add(panelTop, BorderLayout.NORTH);
+
 		// Playable Buttons
 		controlPanel = new JPanel();
-		controlPanel.setSize(700, 10);
-		
+		controlPanel.setSize(700, 50);
+
 		ActionListener al = new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				switch (e.getActionCommand()) {
-				case "move_up": moveHiveUp();
+				case "start_again":
+					startAgain();
 					break;
-				case "move_down": moveDown();
+				case "move_up":
+					moveHiveUp();
 					break;
-				case "move_no": moveNO();
+				case "move_down":
+					moveDown();
 					break;
-				case "move_ne": moveNE();
+				case "move_no":
+					moveNO();
 					break;
-				case "move_se": moveSE();
+				case "move_ne":
+					moveNE();
 					break;
-				case "move_so": moveSO();
+				case "move_se":
+					moveSE();
 					break;
-				case "change_player": changePlayer();
+				case "move_so":
+					moveSO();
+					break;
+				case "change_player":
+					changePlayer();
 					break;
 				}
 			}
 		};
+
+		bn_moveUp = new JButton("Start Again");
+		bn_moveUp.setActionCommand("start_again");
+		bn_moveUp.addActionListener(al);
+		controlPanel.add(bn_moveUp);
 
 		bn_moveUp = new JButton("Move UP");
 		bn_moveUp.setActionCommand("move_up");
@@ -190,14 +224,20 @@ public class Game extends JFrame {
 		bn_changePlayer.addActionListener(al);
 		controlPanel.add(bn_changePlayer);
 
+		JTextField log = new JTextField();
+		log.setEnabled(false);
+		controlPanel.add(log, BorderLayout.PAGE_END);
+
 		add(controlPanel, BorderLayout.SOUTH);
 		// End Playable buttons
-		
+
 		// Players
 		playerAData = new PlayerData(this, isPlayerAToPlay);
-		
+
 		playerBData = new PlayerData(this, isPlayerAToPlay);
 		// TODO
+		// build menu
+		buildMenu();
 
 		setVisible(true);
 	}
@@ -206,6 +246,61 @@ public class Game extends JFrame {
 	 * build menu
 	 */
 	private void buildMenu() {
+		JMenu menu;
+		JMenuItem restartMenuItem;
+		JMenuItem viewScoresItem;
+		JMenuItem aboutItem;
+		ActionListener al = null;
+
+		// Menu Action Listener
+		al = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JMenuItem mi = (JMenuItem) (e.getSource());
+				String menuItemText = mi.getText();
+				switch (menuItemText) {
+				case "Restart Game":
+					System.out.println("testing...Menu");
+					break;
+				case "View Scores": viewScores();
+					break;
+				case "About": about();
+					break;
+				}
+			}
+		};
+
+		// Create the menu bar.
+		menuBar = new JMenuBar();
+		
+		// Build the menu.
+		menu = new JMenu("Options...");
+		menu.setMnemonic(KeyEvent.VK_O);
+		menu.addSeparator();
+		menuBar.add(menu);
+
+		
+		restartMenuItem = new JMenuItem("Restart Game", KeyEvent.VK_R);
+		restartMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+		restartMenuItem.addActionListener(al);
+		menu.add(restartMenuItem);
+		
+		menu.addSeparator();
+		
+		viewScoresItem = new JMenuItem("View Scores", KeyEvent.VK_P);
+		viewScoresItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
+		viewScoresItem.addActionListener(al);
+		menu.add(viewScoresItem);
+		
+		menu.addSeparator();
+		
+		aboutItem = new JMenuItem("About", KeyEvent.VK_A);
+		aboutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
+		aboutItem.addActionListener(al);
+		menu.add(aboutItem);
+		
+		// set Menu Bar on JFrame
+		setJMenuBar(menuBar);
+
 		// must have: Restart game, ViewScores, About
 		// TODO
 	}
