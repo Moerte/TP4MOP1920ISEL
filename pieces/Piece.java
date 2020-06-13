@@ -33,10 +33,13 @@ public abstract class Piece {
 	 * toString
 	 */
 	public String toString() {
-		// TODO
-		return null;
+		return "The piece " + getName() + " with color " + getColor()+ " is from player A? -> " + isFromPlayerA();
 	}
 
+	public String getName() {
+		return this.name;
+	}
+	
 	/**
 	 * get color
 	 */
@@ -83,7 +86,9 @@ public abstract class Piece {
 	 * checks if the x, y received position have one neighbor that is not me
 	 */
 	protected boolean haveValidNeighbour(int x, int y) {
-		// TODO
+		if(x%2 == 0) {
+			return true;
+		}
 		return false;
 	}
 
@@ -91,8 +96,14 @@ public abstract class Piece {
 	 * move one step if it is verify the rules
 	 */
 	protected boolean moveOneCheckedStep(int x, int y) {
-		// TODO
-		return false;
+		if(x%2 == 0) {
+			
+		}
+		if(moveTo(x,y) == true) { //caso o movimento seja de acordo com as regras
+			setXY(x,y);
+			return true;
+		}
+		return false; //caso não seja
 	}
 
 	/**
@@ -100,8 +111,11 @@ public abstract class Piece {
 	 * destiny doesn't violate the one hive rule. It can move several steps.
 	 */
 	protected boolean moveWithOnehiveRuleChecked(int x, int y) {
-		// TODO
-		return false;
+		if(moveTo(x,y) == true) { //caso o movimento seja de acordo com as regras
+			setXY(x,y);
+			return true;
+		}
+		return false; //caso não seja
 	}
 
 	/**

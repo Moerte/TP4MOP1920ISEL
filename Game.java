@@ -72,6 +72,7 @@ public class Game extends JFrame {
 	private JButton bn_moveSE;
 	private JButton bn_moveSO;
 	private JButton bn_changePlayer;
+	private JButton bn_giveUp;
 
 	private JMenuBar menuBar;
 
@@ -180,6 +181,9 @@ public class Game extends JFrame {
 				case "change_player":
 					changePlayer();
 					break;
+				case "give up":
+				giveUp();
+				break;
 				}
 			}
 		};
@@ -224,6 +228,12 @@ public class Game extends JFrame {
 		bn_changePlayer.addActionListener(al);
 		controlPanel.add(bn_changePlayer);
 
+		bn_giveUp = new JButton("Give Up");
+		bn_giveUp.setActionCommand("Give_Up");
+		bn_giveUp.addActionListener(al);
+		controlPanel.add(bn_giveUp);
+		
+		// TODO colocar isto por baixo dos butoes...
 		JTextField log = new JTextField();
 		log.setEnabled(false);
 		controlPanel.add(log, BorderLayout.PAGE_END);
@@ -258,7 +268,7 @@ public class Game extends JFrame {
 				JMenuItem mi = (JMenuItem) (e.getSource());
 				String menuItemText = mi.getText();
 				switch (menuItemText) {
-				case "Restart Game":
+				case "Restart Game": startAgain();
 					System.out.println("testing...Menu");
 					break;
 				case "View Scores": viewScores();
@@ -361,6 +371,10 @@ public class Game extends JFrame {
 	 * start again actions
 	 */
 	private void startAgain() {
+		// TODO
+	}
+
+	private void giveUp() {
 		// TODO
 	}
 
