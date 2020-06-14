@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
@@ -121,7 +122,7 @@ public class Game extends JFrame {
 	 */
 	private void init() {
 		setTitle("Hive Game");
-		setSize(900, 600);
+		setSize(1000, 700);
 
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setLayout(new CenterLayout());
@@ -181,7 +182,7 @@ public class Game extends JFrame {
 				case "change_player":
 					changePlayer();
 					break;
-				case "give up":
+				case "give_up":
 				giveUp();
 				break;
 				}
@@ -229,14 +230,14 @@ public class Game extends JFrame {
 		controlPanel.add(bn_changePlayer);
 
 		bn_giveUp = new JButton("Give Up");
-		bn_giveUp.setActionCommand("Give_Up");
+		bn_giveUp.setActionCommand("give_up");
 		bn_giveUp.addActionListener(al);
 		controlPanel.add(bn_giveUp);
 		
 		// TODO colocar isto por baixo dos butoes...
 		JTextField log = new JTextField();
 		log.setEnabled(false);
-		controlPanel.add(log, BorderLayout.PAGE_END);
+		add(log, BorderLayout.PAGE_END);
 
 		add(controlPanel, BorderLayout.SOUTH);
 		// End Playable buttons
@@ -310,25 +311,23 @@ public class Game extends JFrame {
 		
 		// set Menu Bar on JFrame
 		setJMenuBar(menuBar);
-
-		// must have: Restart game, ViewScores, About
-		// TODO
 	}
 
 	/**
 	 * activate About window
 	 */
 	private void about() {
-		// TODO
-		System.out.println("About window...");
+		JOptionPane.showMessageDialog(this, "Hive Game - V 1.0\nProduced by:\n Nuno Oliveira and Eduardo Marques.",
+				"About information.", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**
 	 * activate View scores window
 	 */
 	private void viewScores() {
-		// TODO
-		System.out.println("View Scores window...");
+		//TODO Adicionar as pontuações
+		JOptionPane.showMessageDialog(this, "Top Scores:\n",
+				"Top Scores", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**
@@ -371,11 +370,25 @@ public class Game extends JFrame {
 	 * start again actions
 	 */
 	private void startAgain() {
-		// TODO
+		// TODO Adicionar a decisão
+		int n = JOptionPane.showConfirmDialog(this, "Are you sure about your decision?",
+				"Restart Game Confirmation", JOptionPane.YES_NO_OPTION);
+		if (n == JOptionPane.YES_OPTION) {
+			
+		} else if (n == JOptionPane.NO_OPTION) {
+			
+		}
 	}
 
 	private void giveUp() {
-		// TODO
+		// TODO Adicionar a decisão
+		int n = JOptionPane.showConfirmDialog(this, "Are you that chicken?",
+				"Give Up Confirmation", JOptionPane.YES_NO_OPTION);
+		if (n == JOptionPane.YES_OPTION) {
+			
+		} else if (n == JOptionPane.NO_OPTION) {
+			
+		}
 	}
 
 	/**

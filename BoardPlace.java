@@ -135,8 +135,7 @@ public class BoardPlace {
 	 * equals, two BoardPlaces are equal if they have the same x and y
 	 */
 	public boolean equals(Object o) {
-		// TODO
-		return false;
+		return this.x == ((BoardPlace)o).x && this.y == ((BoardPlace)o).y;
 	}
 
 	/**
