@@ -111,6 +111,7 @@ public class Game extends JFrame {
 	 * load resources: fonts, images, sounds
 	 */
 	private void loadResources() {
+		//TODO Nao percebo este metodo
 		String fontType = "Comic Sans MS";
 		int size = 40;
 		Font f1 = new Font(fontType, Font.BOLD, size);
