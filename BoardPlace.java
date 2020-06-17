@@ -121,6 +121,7 @@ public class BoardPlace {
 	 */
 	public void setSelected(boolean selected) {
 		// TODO
+		this.selected = selected;
 	}
 
 	/**
@@ -128,7 +129,8 @@ public class BoardPlace {
 	 */
 	public boolean isSelected() {
 		// TODO
-		return false;
+		//return false;
+		return selected;
 	}
 
 	/**
@@ -167,10 +169,15 @@ public class BoardPlace {
 			// TODO
 			g.setColor(getPiece().getColor());
 			g.fillPolygon(polygon);
+			g.setColor(Color.BLUE);
+			g.drawString(String.valueOf(getPiece().getClass().getSimpleName().charAt(0)), baseX, baseY);
+			
 		}
 
 		// if selected, draw selection
 		if (isSelected()) {
+			g.setColor(PIECESELECTIONCOLOR);
+			g.fillPolygon(polygon);
 			// TODO
 		}
 	}
