@@ -86,7 +86,6 @@ public class BoardPlace {
 	 * get the tail piece - the others are not accessible
 	 */
 	public Piece getPiece() {
-		// TODO
 		if (pieces.size() == 0)
 			return null;
 
@@ -97,7 +96,6 @@ public class BoardPlace {
 	 * Add piece to tail
 	 */
 	public void addPiece(Piece p) {
-		// TODO
 		pieces.add(p);
 	}
 
@@ -105,7 +103,10 @@ public class BoardPlace {
 	 * remove piece P if it is on tail
 	 */
 	public boolean remPiece(Piece p) {
-		// TODO
+		if(pieces.get(pieces.size() - 1) == p) {
+			pieces.remove(pieces.size() - 1);
+			return true;
+		}
 		return false;
 	}
 
@@ -113,14 +114,16 @@ public class BoardPlace {
 	 * clear all the pieces on this boardPlace
 	 */
 	public void clear() {
-		// TODO
+		for (int i = 0; i< pieces.size()-1;i++) {
+			pieces.remove(i);
+		}
 	}
 
 	/**
 	 * set selected state
 	 */
 	public void setSelected(boolean selected) {
-		// TODO
+		// TODO verificar se funciona
 		this.selected = selected;
 	}
 
@@ -128,8 +131,7 @@ public class BoardPlace {
 	 * get selected state
 	 */
 	public boolean isSelected() {
-		// TODO
-		//return false;
+		// TODO verificar se funciona
 		return selected;
 	}
 

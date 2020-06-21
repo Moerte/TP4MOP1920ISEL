@@ -63,7 +63,7 @@ public class Board extends JPanel {
 
 		for (int y = 0; y < DIMY; y++) {
 			for (int x = 0; x < DIMX; x++) {
-				board[x][y] = new BoardPlace(this, x, y);
+				board[x][y] = new BoardPlace(this, x, y);;
 			}
 		}
 
@@ -93,7 +93,7 @@ public class Board extends JPanel {
 	 * sets one boardPlace selected state
 	 */
 	public void setSelXY(int x, int y, boolean selectedState) {
-		// TODO
+		board[x][y].setSelected(selectedState);
 	}
 
 	/**
