@@ -111,7 +111,7 @@ public class Game extends JFrame {
 	 * load resources: fonts, images, sounds
 	 */
 	private void loadResources() {
-		//TODO Nao percebo este metodo
+		// TODO Nao percebo este metodo
 		String fontType = "Comic Sans MS";
 		int size = 40;
 		Font f1 = new Font(fontType, Font.BOLD, size);
@@ -143,13 +143,6 @@ public class Game extends JFrame {
 		String fontType = "Comic Sans MS";
 		int size = 25;
 		Font f1 = new Font(fontType, Font.BOLD, size);
-
-		// Main Label
-		mainLabel = new JLabel("HIVE GAME: Current Player -> " + getPlayerData(isPlayerAToPlay));
-		mainLabel.setFont(f1);
-		mainLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		panelTop.add(mainLabel, BorderLayout.CENTER);
-		add(panelTop, BorderLayout.NORTH);
 
 		// Playable Buttons
 		controlPanel = new JPanel();
@@ -184,8 +177,8 @@ public class Game extends JFrame {
 					changePlayer();
 					break;
 				case "give_up":
-				giveUp();
-				break;
+					giveUp();
+					break;
 				}
 			}
 		};
@@ -234,21 +227,35 @@ public class Game extends JFrame {
 		bn_giveUp.setActionCommand("give_up");
 		bn_giveUp.addActionListener(al);
 		controlPanel.add(bn_giveUp);
-		
-		// TODO colocar isto por baixo dos butoes...
+
+		// TODO colocar isto por baixo dos botoes...
 		JTextField log = new JTextField();
 		log.setEnabled(false);
-		add(log, BorderLayout.PAGE_END);
+		controlPanel.add(log, BorderLayout.PAGE_END);
 
 		add(controlPanel, BorderLayout.SOUTH);
 		// End Playable buttons
 
-		// Players
-		playerAData = new PlayerData(this, isPlayerAToPlay);
-
-		playerBData = new PlayerData(this, isPlayerAToPlay);
 		// TODO
 		// build menu
+
+		playerAData = new PlayerData(this, true);
+		JPanel panelA = new JPanel();
+		panelA = playerAData.getSidePanel();
+		add(panelA, BorderLayout.WEST);
+
+		playerBData = new PlayerData(this, false);
+		JPanel panelB = new JPanel();
+		panelB = playerBData.getSidePanel();
+		add(panelB, BorderLayout.EAST);
+
+		// Main Label
+		mainLabel = new JLabel("HIVE GAME: Current Player -> " + getPlayerData(true));
+		mainLabel.setFont(f1);
+		mainLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		panelTop.add(mainLabel, BorderLayout.CENTER);
+		add(panelTop, BorderLayout.NORTH);
+
 		buildMenu();
 
 		setVisible(true);
@@ -270,12 +277,15 @@ public class Game extends JFrame {
 				JMenuItem mi = (JMenuItem) (e.getSource());
 				String menuItemText = mi.getText();
 				switch (menuItemText) {
-				case "Restart Game": startAgain();
+				case "Restart Game":
+					startAgain();
 					System.out.println("testing...Menu");
 					break;
-				case "View Scores": viewScores();
+				case "View Scores":
+					viewScores();
 					break;
-				case "About": about();
+				case "About":
+					about();
 					break;
 				}
 			}
@@ -283,33 +293,32 @@ public class Game extends JFrame {
 
 		// Create the menu bar.
 		menuBar = new JMenuBar();
-		
+
 		// Build the menu.
 		menu = new JMenu("Options...");
 		menu.setMnemonic(KeyEvent.VK_O);
 		menu.addSeparator();
 		menuBar.add(menu);
 
-		
 		restartMenuItem = new JMenuItem("Restart Game", KeyEvent.VK_R);
 		restartMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
 		restartMenuItem.addActionListener(al);
 		menu.add(restartMenuItem);
-		
+
 		menu.addSeparator();
-		
+
 		viewScoresItem = new JMenuItem("View Scores", KeyEvent.VK_P);
 		viewScoresItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
 		viewScoresItem.addActionListener(al);
 		menu.add(viewScoresItem);
-		
+
 		menu.addSeparator();
-		
+
 		aboutItem = new JMenuItem("About", KeyEvent.VK_A);
 		aboutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
 		aboutItem.addActionListener(al);
 		menu.add(aboutItem);
-		
+
 		// set Menu Bar on JFrame
 		setJMenuBar(menuBar);
 	}
@@ -318,7 +327,7 @@ public class Game extends JFrame {
 	 * activate About window
 	 */
 	private void about() {
-		JOptionPane.showMessageDialog(this, "Hive Game - V 1.0\nProduced by:\n Nuno Oliveira and Eduardo Marques.",
+		JOptionPane.showMessageDialog(this, "Hive Game - V 1.0\nProduced by:\nNuno Oliveira and Eduardo Marques.",
 				"About information.", JOptionPane.INFORMATION_MESSAGE);
 	}
 
@@ -326,9 +335,8 @@ public class Game extends JFrame {
 	 * activate View scores window
 	 */
 	private void viewScores() {
-		//TODO Adicionar as pontuações
-		JOptionPane.showMessageDialog(this, "Top Scores:\n",
-				"Top Scores", JOptionPane.INFORMATION_MESSAGE);
+		// TODO Adicionar as pontuações
+		JOptionPane.showMessageDialog(this, "Top Scores:\n", "Top Scores", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**
@@ -372,23 +380,23 @@ public class Game extends JFrame {
 	 */
 	private void startAgain() {
 		// TODO Adicionar a decisão
-		int n = JOptionPane.showConfirmDialog(this, "Are you sure about your decision?",
-				"Restart Game Confirmation", JOptionPane.YES_NO_OPTION);
+		int n = JOptionPane.showConfirmDialog(this, "Are you sure about your decision?", "Restart Game Confirmation",
+				JOptionPane.YES_NO_OPTION);
 		if (n == JOptionPane.YES_OPTION) {
-			
+
 		} else if (n == JOptionPane.NO_OPTION) {
-			
+
 		}
 	}
 
 	private void giveUp() {
 		// TODO Adicionar a decisão
-		int n = JOptionPane.showConfirmDialog(this, "Are you that chicken?",
-				"Give Up Confirmation", JOptionPane.YES_NO_OPTION);
+		int n = JOptionPane.showConfirmDialog(this, "Are you that chicken?", "Give Up Confirmation",
+				JOptionPane.YES_NO_OPTION);
 		if (n == JOptionPane.YES_OPTION) {
-			
+
 		} else if (n == JOptionPane.NO_OPTION) {
-			
+
 		}
 	}
 
@@ -494,6 +502,7 @@ public class Game extends JFrame {
 	 * move hive UP, if it can be moved
 	 */
 	private void moveHiveUp() {
+		// TODO
 		System.out.println("teste");
 
 	}

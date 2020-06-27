@@ -1,5 +1,6 @@
 package tps.tp4;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
@@ -7,6 +8,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -69,6 +71,15 @@ public class PlayerData {
 	 */
 	public PlayerData(Game game, boolean isPlayerA) {
 		// TODO
+		String player = isPlayerA == true ? "One": "Two";
+		JLabel test = new JLabel();
+		test.setText("Player "+ player);
+		test.setBackground(Color.BLUE);
+		sidePanel.add(test);
+		
+		
+		
+		// End Player
 	}
 
 	/**
@@ -76,6 +87,10 @@ public class PlayerData {
 	 */
 	public void init(boolean playerIsActive) {
 		// TODO
+		playerLabel = new JLabel();
+		//colorLabel = new JLabel();
+		movesLabel = new JLabel();
+		
 	}
 
 	/**
@@ -187,7 +202,7 @@ public class PlayerData {
 }
 
 /**
- * classe que suporta as labels das pe�as iniciais de cada jogador
+ * classe que suporta as labels das peï¿½as iniciais de cada jogador
  */
 class HiveLabel extends JLabel {
 	private static final long serialVersionUID = 1L;
@@ -204,7 +219,8 @@ class HiveLabel extends JLabel {
 	 * 
 	 */
 	public HiveLabel(Piece p, Game game) {
-		// TODO
+		this.p = p;
+		this.game = game;
 	}
 
 	/**
@@ -233,6 +249,7 @@ class HiveLabel extends JLabel {
 	 */
 	public void activate() {
 		setBorder(selBorder);
+		this.isDeactivated = false;
 	}
 
 	/**
@@ -246,7 +263,8 @@ class HiveLabel extends JLabel {
 	 * 
 	 */
 	public void deactivate() {
-		// TODO
+		setBorder(selBorder);
+		this.isDeactivated = false;
 	}
 
 	/**
