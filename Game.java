@@ -95,10 +95,8 @@ public class Game extends JFrame {
 	public static void main(String[] args) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-
 				// create object Game
 				Game g = new Game();
-
 				// launch the frame, but will be activated with some delay
 				g.init();
 			}
@@ -138,7 +136,7 @@ public class Game extends JFrame {
 		getBoard().addPiece(s, 4, 5);
 
 		JPanel panelTop = new JPanel(new BorderLayout());
-		panelTop.setBackground(Color.GRAY);
+		panelTop.setBackground(Color.LIGHT_GRAY);
 
 		String fontType = "Comic Sans MS";
 		int size = 25;

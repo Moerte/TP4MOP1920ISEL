@@ -3,6 +3,7 @@ package tps.tp4;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -71,12 +72,19 @@ public class PlayerData {
 	 */
 	public PlayerData(Game game, boolean isPlayerA) {
 		// TODO
-		String player = isPlayerA == true ? "One": "Two";
-		JLabel test = new JLabel();
-		test.setText("Player "+ player);
-		test.setBackground(Color.BLUE);
-		sidePanel.add(test);
+		String player = isPlayerA == true ? "A": "B";
+		playerLabel = new JLabel("Player "+ player, SwingConstants.CENTER);
+		playerLabel.setPreferredSize(new Dimension(150, 30));
+		playerLabel.setOpaque(true);
+		playerLabel.setBackground(INACTIVEPLAYERCOLOR);
+		sidePanel.add(playerLabel);
 		
+		JLabel playerColor = new JLabel("Player Color", SwingConstants.CENTER);
+		playerColor.setPreferredSize(new Dimension(150, 30));
+		playerColor.setOpaque(true);
+		// TODO Perceber como ir buscar a cor do player
+		playerColor.setBackground(Color.cyan);
+		sidePanel.add(playerColor);
 		
 		
 		// End Player
@@ -87,9 +95,9 @@ public class PlayerData {
 	 */
 	public void init(boolean playerIsActive) {
 		// TODO
-		playerLabel = new JLabel();
-		//colorLabel = new JLabel();
+		
 		movesLabel = new JLabel();
+		
 		
 	}
 
@@ -160,7 +168,7 @@ public class PlayerData {
 	 * set this player background as current player or not
 	 */
 	public void setPlayerPanelActive(boolean active) {
-		// TODO
+		playerLabel.setBackground(ACTIVEPLAYERCOLOR);
 	}
 
 	/**
@@ -241,7 +249,11 @@ class HiveLabel extends JLabel {
 	 * 
 	 */
 	public void init() {
-		// TODO
+		JLabel piecesLabel = new JLabel();
+		piecesLabel.setText(p.getName());
+		piecesLabel.setPreferredSize(new Dimension(150, 30));
+		piecesLabel.setBackground(p.getColor());
+		
 	}
 
 	/**
