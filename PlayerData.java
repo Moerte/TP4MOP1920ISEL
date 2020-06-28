@@ -15,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
+import com.sun.tools.javac.code.Types.MostSpecificReturnCheck;
+
 import tps.tp4.pieces.Ant;
 import tps.tp4.pieces.Beetle;
 import tps.tp4.pieces.Grasshopper;
@@ -36,10 +38,8 @@ public class PlayerData {
 	 * Don't change this
 	 */
 	private final PiecesAndItsNumber[] ListaDePecas = new PiecesAndItsNumber[] {
-			new PiecesAndItsNumber(PType.QUEENBEE, 1),
-			new PiecesAndItsNumber(PType.BEETLE, 2),
-			new PiecesAndItsNumber(PType.GRASHOPPER, 2),
-			new PiecesAndItsNumber(PType.SPIDER, 3),
+			new PiecesAndItsNumber(PType.QUEENBEE, 1), new PiecesAndItsNumber(PType.BEETLE, 2),
+			new PiecesAndItsNumber(PType.GRASHOPPER, 2), new PiecesAndItsNumber(PType.SPIDER, 3),
 			new PiecesAndItsNumber(PType.ANT, 3) };
 
 	private JPanel sidePanel = new JPanel();
@@ -72,21 +72,35 @@ public class PlayerData {
 	 */
 	public PlayerData(Game game, boolean isPlayerA) {
 		// TODO
-		String player = isPlayerA == true ? "A": "B";
-		playerLabel = new JLabel("Player "+ player, SwingConstants.CENTER);
+		String player = isPlayerA == true ? "A" : "B";
+		playerLabel = new JLabel("Player " + player, SwingConstants.CENTER);
 		playerLabel.setPreferredSize(new Dimension(150, 30));
 		playerLabel.setOpaque(true);
 		playerLabel.setBackground(INACTIVEPLAYERCOLOR);
 		sidePanel.add(playerLabel);
-		
+
 		JLabel playerColor = new JLabel("Player Color", SwingConstants.CENTER);
 		playerColor.setPreferredSize(new Dimension(150, 30));
+		playerColor.setForeground(Color.LIGHT_GRAY);
 		playerColor.setOpaque(true);
 		// TODO Perceber como ir buscar a cor do player
-		playerColor.setBackground(Color.cyan);
-		sidePanel.add(playerColor);
+
+		if (isPlayerA == true) {
+			playerLabel.setBackground(Color.gray);
+			playerColor.setBackground(Color.BLACK);
+			sidePanel.add(playerColor);
+
+		} else {
+			playerLabel.setBackground(Color.ORANGE);
+			playerColor.setBackground(Color.GRAY);
+			sidePanel.add(playerColor);
+		}
 		
-		
+		movesLabel = new JLabel(String.valueOf(numberOfMoves), SwingConstants.CENTER);
+		movesLabel.setOpaque(true);
+		movesLabel.setPreferredSize(new Dimension(150, 30));
+		sidePanel.add(movesLabel);
+
 		// End Player
 	}
 
@@ -95,10 +109,9 @@ public class PlayerData {
 	 */
 	public void init(boolean playerIsActive) {
 		// TODO
-		
+
 		movesLabel = new JLabel();
-		
-		
+
 	}
 
 	/**
@@ -119,7 +132,7 @@ public class PlayerData {
 	 * increment number of moves of this player
 	 */
 	void incNumberOfMoves() {
-		// TODO
+		this.numberOfMoves++;
 	}
 
 	/**
@@ -133,7 +146,7 @@ public class PlayerData {
 	 * sets the number of moves ...
 	 */
 	void setNumberOfMoves(int n) {
-		// TODO
+		this.numberOfMoves = n;
 	}
 
 	/**
@@ -147,21 +160,22 @@ public class PlayerData {
 	 * set the number of pieces on board ...
 	 */
 	void setNumberOfPiecesOnBoard(int np) {
-		// TODO
+		this.numberOfPiecesOnBoard = np;
 	}
 
 	/**
 	 * increases the number of pieces on board ...
 	 */
 	void incNumberOfPiecesOnBoard() {
-		// TODO
+		this.numberOfPiecesOnBoard++;
 	}
 
 	/**
 	 * decreases the number of pieces on board ..
 	 */
 	void decNumberOfPiecesOnBoard() {
-		// TODO
+		if (this.numberOfPiecesOnBoard > 0)
+			this.numberOfPiecesOnBoard--;
 	}
 
 	/**
@@ -214,10 +228,8 @@ public class PlayerData {
  */
 class HiveLabel extends JLabel {
 	private static final long serialVersionUID = 1L;
-	final static Border unselBorder = BorderFactory
-			.createLineBorder(Color.darkGray);
-	final static Border selBorder = BorderFactory.createLineBorder(Color.white,
-			3);
+	final static Border unselBorder = BorderFactory.createLineBorder(Color.darkGray);
+	final static Border selBorder = BorderFactory.createLineBorder(Color.white, 3);
 
 	private Piece p;
 	private Game game;
@@ -253,7 +265,7 @@ class HiveLabel extends JLabel {
 		piecesLabel.setText(p.getName());
 		piecesLabel.setPreferredSize(new Dimension(150, 30));
 		piecesLabel.setBackground(p.getColor());
-		
+
 	}
 
 	/**

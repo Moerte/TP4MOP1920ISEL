@@ -111,9 +111,9 @@ public class Game extends JFrame {
 	private void loadResources() {
 		// TODO Nao percebo este metodo
 		String fontType = "Comic Sans MS";
-		int size = 40;
-		Font f1 = new Font(fontType, Font.BOLD, size);
-		// setFont(f1);
+		int size = 20;
+		this.fontCurrentPlayer = new Font(fontType, Font.BOLD, size);
+		this.fontPieces = new Font(fontType, Font.BOLD, size);
 	}
 
 	/**
@@ -122,6 +122,7 @@ public class Game extends JFrame {
 	private void init() {
 		setTitle("Hive Game");
 		setSize(1000, 700);
+		loadResources();
 
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setLayout(new CenterLayout());
@@ -135,12 +136,6 @@ public class Game extends JFrame {
 		Spider s = new Spider(this, true);
 		getBoard().addPiece(s, 4, 5);
 
-		JPanel panelTop = new JPanel(new BorderLayout());
-		panelTop.setBackground(Color.LIGHT_GRAY);
-
-		String fontType = "Comic Sans MS";
-		int size = 25;
-		Font f1 = new Font(fontType, Font.BOLD, size);
 
 		// Playable Buttons
 		controlPanel = new JPanel();
@@ -248,11 +243,11 @@ public class Game extends JFrame {
 		add(panelB, BorderLayout.EAST);
 
 		// Main Label
-		mainLabel = new JLabel("HIVE GAME: Current Player -> " + getPlayerData(true));
-		mainLabel.setFont(f1);
-		mainLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		panelTop.add(mainLabel, BorderLayout.CENTER);
-		add(panelTop, BorderLayout.NORTH);
+		mainLabel = new JLabel("HIVE GAME: Current Player -> " + getPlayerData(true), SwingConstants.CENTER);
+		mainLabel.setFont(this.fontCurrentPlayer);
+		mainLabel.setOpaque(true);
+		mainLabel.setBackground(Color.LIGHT_GRAY);
+		add(mainLabel, BorderLayout.NORTH);
 
 		buildMenu();
 
