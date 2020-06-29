@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
-import com.sun.tools.javac.code.Types.MostSpecificReturnCheck;
 
 import tps.tp4.pieces.Ant;
 import tps.tp4.pieces.Beetle;
@@ -71,34 +70,52 @@ public class PlayerData {
 	 * Constructor - should build the side panel for the player
 	 */
 	public PlayerData(Game game, boolean isPlayerA) {
+		
+		Dimension dim = new Dimension(150, 30);
 		// TODO
 		String player = isPlayerA == true ? "A" : "B";
 		playerLabel = new JLabel("Player " + player, SwingConstants.CENTER);
-		playerLabel.setPreferredSize(new Dimension(150, 30));
+		playerLabel.setPreferredSize(dim);
 		playerLabel.setOpaque(true);
 		playerLabel.setBackground(INACTIVEPLAYERCOLOR);
 		sidePanel.add(playerLabel);
 
 		JLabel playerColor = new JLabel("Player Color", SwingConstants.CENTER);
-		playerColor.setPreferredSize(new Dimension(150, 30));
-		playerColor.setForeground(Color.LIGHT_GRAY);
+		playerColor.setPreferredSize(dim);
+		playerColor.setForeground(Color.WHITE);
+		playerColor.setBackground(Game.getColorFromPlayer(isPlayerA));
 		playerColor.setOpaque(true);
+		sidePanel.add(playerColor);
 		// TODO Perceber como ir buscar a cor do player
 
-		if (isPlayerA == true) {
+		if(isPlayerA == true) {
 			playerLabel.setBackground(Color.gray);
 			playerColor.setBackground(Color.BLACK);
 			sidePanel.add(playerColor);
-
-		} else {
+			
+		}
+		else {
 			playerLabel.setBackground(Color.ORANGE);
 			playerColor.setBackground(Color.GRAY);
 			sidePanel.add(playerColor);
 		}
 		
+//			playerLabel.setBackground(Color.gray);
+//			playerColor.setBackground(Game.getColorFromPlayer(isPlayerA));
+//			sidePanel.add(playerColor);
+//
+//			playerLabel.setBackground(Color.ORANGE);
+//			playerColor.setBackground(Color.GRAY);
+//			sidePanel.add(playerColor);
+//		}
+		
+		for (PiecesAndItsNumber piecesAndItsNumber : ListaDePecas) {
+			
+		}
 		movesLabel = new JLabel(String.valueOf(numberOfMoves), SwingConstants.CENTER);
 		movesLabel.setOpaque(true);
-		movesLabel.setPreferredSize(new Dimension(150, 30));
+		movesLabel.setBackground(Color.GREEN);
+		movesLabel.setPreferredSize(dim);
 		sidePanel.add(movesLabel);
 
 		// End Player
@@ -109,8 +126,6 @@ public class PlayerData {
 	 */
 	public void init(boolean playerIsActive) {
 		// TODO
-
-		movesLabel = new JLabel();
 
 	}
 

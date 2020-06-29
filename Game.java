@@ -140,6 +140,7 @@ public class Game extends JFrame {
 		// Playable Buttons
 		controlPanel = new JPanel();
 		controlPanel.setSize(700, 50);
+		//controlPanel.setLayout();
 
 		ActionListener al = new ActionListener() {
 
