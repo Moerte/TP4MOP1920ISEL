@@ -88,26 +88,18 @@ public class PlayerData {
 		sidePanel.add(playerColor);
 		// TODO Perceber como ir buscar a cor do player
 
-		if(isPlayerA == true) {
-			playerLabel.setBackground(Color.gray);
-			playerColor.setBackground(Color.BLACK);
-			sidePanel.add(playerColor);
-			
-		}
-		else {
-			playerLabel.setBackground(Color.ORANGE);
-			playerColor.setBackground(Color.GRAY);
-			sidePanel.add(playerColor);
-		}
-		
+//		if(isPlayerA == true) {
 //			playerLabel.setBackground(Color.gray);
-//			playerColor.setBackground(Game.getColorFromPlayer(isPlayerA));
+//			playerColor.setBackground(Color.BLACK);
 //			sidePanel.add(playerColor);
-//
+//			
+//		}
+//		else {
 //			playerLabel.setBackground(Color.ORANGE);
 //			playerColor.setBackground(Color.GRAY);
 //			sidePanel.add(playerColor);
 //		}
+		
 		
 		for (PiecesAndItsNumber piecesAndItsNumber : ListaDePecas) {
 			

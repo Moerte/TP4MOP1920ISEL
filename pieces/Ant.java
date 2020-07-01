@@ -29,7 +29,9 @@ public class Ant extends Piece {
 	 * rule and the physical possible move rule in each step.
 	 */
 	public boolean moveTo(int x, int y) {
-		// TODO
+		if(game.getBoard().getBoardPlace(x, y) == null) {
+			return false;
+		}
 		return false;
 	}
 
