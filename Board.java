@@ -67,9 +67,9 @@ public class Board extends JPanel {
 			}
 		}
 
-		// added one queen, to have some visualization
-		QueenBee q = new QueenBee(game, true);
-		addPiece(q, 1,7);
+//		// added one queen, to have some visualization
+//		QueenBee q = new QueenBee(game, true);
+//		addPiece(q, 1,7);
 
 	}
 
@@ -86,7 +86,7 @@ public class Board extends JPanel {
 	 * clears the board data - clear all the pieces on board
 	 */
 	public void resetBoard() {
-		// TODO
+		initBoard();
 	}
 
 	/**
@@ -229,6 +229,18 @@ public class Board extends JPanel {
 	private void getPiecesFromThisPoint(int x, int y, List<Piece> pieces) {
 
 		// TODO
+	}
+	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public boolean isInside(int x, int y) {
+		if(x >= 0 && x < DIMX && y >= 0 && y < DIMY)
+			return true;
+		return false;
 	}
 
 };

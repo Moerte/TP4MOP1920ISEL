@@ -281,6 +281,9 @@ public class Game extends JFrame {
 				case "About":
 					about();
 					break;
+				case "Help":
+					
+					break;
 				}
 			}
 		};
@@ -307,11 +310,17 @@ public class Game extends JFrame {
 		menu.add(viewScoresItem);
 
 		menu.addSeparator();
-
+		
+		// TODO Adicionar foto ao menu
 		aboutItem = new JMenuItem("About", KeyEvent.VK_A);
 		aboutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
 		aboutItem.addActionListener(al);
 		menu.add(aboutItem);
+		
+		JMenuItem helpItem = new JMenuItem("Help", KeyEvent.VK_H);
+		helpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.CTRL_MASK));
+		helpItem.addActionListener(al);
+		menu.add(helpItem);
 
 		// set Menu Bar on JFrame
 		setJMenuBar(menuBar);
@@ -379,7 +388,7 @@ public class Game extends JFrame {
 		if (n == JOptionPane.YES_OPTION) {
 
 		} else if (n == JOptionPane.NO_OPTION) {
-
+			return;
 		}
 	}
 
@@ -388,9 +397,9 @@ public class Game extends JFrame {
 		int n = JOptionPane.showConfirmDialog(this, "Are you that chicken?", "Give Up Confirmation",
 				JOptionPane.YES_NO_OPTION);
 		if (n == JOptionPane.YES_OPTION) {
-
+			
 		} else if (n == JOptionPane.NO_OPTION) {
-
+			return;
 		}
 	}
 

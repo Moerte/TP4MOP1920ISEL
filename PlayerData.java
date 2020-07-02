@@ -1,20 +1,13 @@
 package tps.tp4;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
-
 
 import tps.tp4.pieces.Ant;
 import tps.tp4.pieces.Beetle;
@@ -64,6 +57,13 @@ public class PlayerData {
 			this.nPecas = nPecas;
 		}
 
+		public PType getTipo() {
+			return tipo;
+		}
+
+		public int getnPecas() {
+			return nPecas;
+		}
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class PlayerData {
 	 */
 	public PlayerData(Game game, boolean isPlayerA) {
 		
-		Dimension dim = new Dimension(150, 30);
+		Dimension dim = new Dimension(150, 20);
 		// TODO
 		String player = isPlayerA == true ? "A" : "B";
 		playerLabel = new JLabel("Player " + player, SwingConstants.CENTER);
@@ -86,23 +86,18 @@ public class PlayerData {
 		playerColor.setBackground(Game.getColorFromPlayer(isPlayerA));
 		playerColor.setOpaque(true);
 		sidePanel.add(playerColor);
-		// TODO Perceber como ir buscar a cor do player
-
-//		if(isPlayerA == true) {
-//			playerLabel.setBackground(Color.gray);
-//			playerColor.setBackground(Color.BLACK);
-//			sidePanel.add(playerColor);
-//			
-//		}
-//		else {
-//			playerLabel.setBackground(Color.ORANGE);
-//			playerColor.setBackground(Color.GRAY);
-//			sidePanel.add(playerColor);
-//		}
 		
-		
-		for (PiecesAndItsNumber piecesAndItsNumber : ListaDePecas) {
-			
+		// TODO melhorar
+		for (PiecesAndItsNumber p : ListaDePecas) {
+			for (int i = 0; i < p.getnPecas(); i++) {
+				Piece addedPiece = p.getTipo().createNew(game, isPlayerA);
+				JLabel piece = new JLabel(addedPiece.getName(), SwingConstants.CENTER);
+				piece.setPreferredSize(dim);
+				piece.setForeground(Color.WHITE);
+				piece.setBackground(addedPiece.getColor());
+				piece.setOpaque(true);
+				sidePanel.add(piece);
+			}
 		}
 		movesLabel = new JLabel(String.valueOf(numberOfMoves), SwingConstants.CENTER);
 		movesLabel.setOpaque(true);

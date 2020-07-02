@@ -32,6 +32,8 @@ public class Ant extends Piece {
 		if(game.getBoard().getBoardPlace(x, y) == null) {
 			return false;
 		}
+		// TODO
+		
 		return false;
 	}
 

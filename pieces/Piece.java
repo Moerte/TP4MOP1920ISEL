@@ -17,7 +17,7 @@ public abstract class Piece {
 
 	private String name;
 	private Color color;
-
+	private boolean isBelow;
 	/**
 	 * constructor
 	 */
@@ -27,6 +27,7 @@ public abstract class Piece {
 		this.game = game;
 		this.isFromPlayerA = isFromPlayerA;
 		this.color = color;
+		this.isBelow = false;
 	}
 
 	/**
@@ -86,8 +87,15 @@ public abstract class Piece {
 	 * checks if the x, y received position have one neighbor that is not me
 	 */
 	protected boolean haveValidNeighbour(int x, int y) {
-		if(x%2 == 0) {
-			return true;
+		for(int i = x - 1; i <= x + 1; i++) {
+			for(int j = y - 1; j <= j + 1; j++) {
+				if(!game.getBoard().isInside(i, j))
+					continue;
+				if(x == i && y == j)
+					continue;
+				if(game.getBoard().getBoardPlace(i, j).getPiece() != null)
+					return true;
+			}
 		}
 		return false;
 	}
@@ -96,13 +104,8 @@ public abstract class Piece {
 	 * move one step if it is verify the rules
 	 */
 	protected boolean moveOneCheckedStep(int x, int y) {
-		if(x%2 == 0) {
-			
-		}
-		if(moveTo(x,y) == true) { //caso o movimento seja de acordo com as regras
-			setXY(x,y);
-			return true;
-		}
+		
+		//TODO
 		return false; //caso não seja
 	}
 
@@ -111,10 +114,10 @@ public abstract class Piece {
 	 * destiny doesn't violate the one hive rule. It can move several steps.
 	 */
 	protected boolean moveWithOnehiveRuleChecked(int x, int y) {
-		if(moveTo(x,y) == true) { //caso o movimento seja de acordo com as regras
-			setXY(x,y);
-			return true;
-		}
+//		if(moveTo(x,y) == true) { //caso o movimento seja de acordo com as regras
+//			setXY(x,y);
+//			return true;
+//		}
 		return false; //caso não seja
 	}
 
