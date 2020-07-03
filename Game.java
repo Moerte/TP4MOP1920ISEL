@@ -383,8 +383,7 @@ public class Game extends JFrame {
 	 */
 	private void startAgain() {
 		// TODO Adicionar a decisão
-		int n = JOptionPane.showConfirmDialog(this, "Are you sure about your decision?", "Restart Game Confirmation",
-				JOptionPane.YES_NO_OPTION);
+		int n = JOptionPane.showConfirmDialog(this, "Are you sure about your decision?", "Restart Game Confirmation", JOptionPane.YES_NO_OPTION);
 		if (n == JOptionPane.YES_OPTION) {
 
 		} else if (n == JOptionPane.NO_OPTION) {
@@ -395,7 +394,7 @@ public class Game extends JFrame {
 	private void giveUp() {
 		// TODO Adicionar a decisão
 		int n = JOptionPane.showConfirmDialog(this, "Are you that chicken?", "Give Up Confirmation",
-				JOptionPane.YES_NO_OPTION);
+JOptionPane.YES_NO_OPTION);
 		if (n == JOptionPane.YES_OPTION) {
 			
 		} else if (n == JOptionPane.NO_OPTION) {

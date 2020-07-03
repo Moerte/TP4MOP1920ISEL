@@ -2,6 +2,7 @@ package tps.tp4;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -88,17 +89,33 @@ public class PlayerData {
 		sidePanel.add(playerColor);
 		
 		// TODO melhorar
+		JPanel piecesPanel = new JPanel(new GridLayout(11, 1, 0, 0));
 		for (PiecesAndItsNumber p : ListaDePecas) {
+			Piece addedPiece = p.getTipo().createNew(game, isPlayerA);
+			JLabel piece = new JLabel();
 			for (int i = 0; i < p.getnPecas(); i++) {
-				Piece addedPiece = p.getTipo().createNew(game, isPlayerA);
-				JLabel piece = new JLabel(addedPiece.getName(), SwingConstants.CENTER);
+				HiveLabel pieceLabel = new HiveLabel(addedPiece, game);
+				//piece = pieceLabel.getPiece().getName(), SwingConstants.CENTER);
+				piece = new JLabel();
+				piece.setText(pieceLabel.getPiece().getName());
+				piece.setHorizontalAlignment(SwingConstants.CENTER);
 				piece.setPreferredSize(dim);
 				piece.setForeground(Color.WHITE);
-				piece.setBackground(addedPiece.getColor());
+				piece.setBackground(pieceLabel.getPiece().getColor());
 				piece.setOpaque(true);
-				sidePanel.add(piece);
+				//piecesPanel.add(piece);
+				if(pieceLabel.getPiece().getName() == "QueenBee") {
+					queenBeeLabel = pieceLabel;
+					queenBee = (QueenBee)pieceLabel.getPiece();
+				}
+				
 			}
+			//sidePanel.add(piecesPanel);
+			piecesPanel.add(piece);
 		}
+		sidePanel.add(piecesPanel);
+		
+		
 		movesLabel = new JLabel(String.valueOf(numberOfMoves), SwingConstants.CENTER);
 		movesLabel.setOpaque(true);
 		movesLabel.setBackground(Color.GREEN);
@@ -263,10 +280,7 @@ class HiveLabel extends JLabel {
 	 * 
 	 */
 	public void init() {
-		JLabel piecesLabel = new JLabel();
-		piecesLabel.setText(p.getName());
-		piecesLabel.setPreferredSize(new Dimension(150, 30));
-		piecesLabel.setBackground(p.getColor());
+		
 
 	}
 
