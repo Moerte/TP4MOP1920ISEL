@@ -114,7 +114,7 @@ public class BoardPlace {
 	 * clear all the pieces on this boardPlace
 	 */
 	public void clear() {
-		for (int i = 0; i< pieces.size()-1;i++) {
+		for (int i = 0; i < pieces.size();i++) {
 			pieces.remove(i);
 		}
 	}
@@ -154,7 +154,9 @@ public class BoardPlace {
 	 * received direction. To be used is move HIVE up, down, NO, ....
 	 */
 	public void migrateTo(Direction d) {
-		// TODO
+		switch(d) {
+		case NO : 
+		}
 	}
 
 	/**

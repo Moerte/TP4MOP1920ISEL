@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -123,6 +125,7 @@ public class Game extends JFrame {
 		setTitle("Hive Game");
 		setSize(1000, 700);
 		loadResources();
+		
 
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setLayout(new CenterLayout());
@@ -132,9 +135,9 @@ public class Game extends JFrame {
 		board = new Board(this, fontPieces);
 		add(board, BorderLayout.CENTER);
 
-		// add a spider - just to check
-		Spider s = new Spider(this, true);
-		getBoard().addPiece(s, 4, 5);
+//		// add a spider - just to check
+//		Spider s = new Spider(this, true);
+//		getBoard().addPiece(s, 4, 5);
 
 
 		// Playable Buttons
@@ -168,7 +171,7 @@ public class Game extends JFrame {
 					moveSO();
 					break;
 				case "change_player":
-					changePlayer();
+					bn_changePlayerAction();
 					break;
 				case "give_up":
 					giveUp();
@@ -251,8 +254,58 @@ public class Game extends JFrame {
 		add(mainLabel, BorderLayout.NORTH);
 
 		buildMenu();
+		currentPlayerData = playerAData;
 
 		setVisible(true);
+	}
+	
+	private void mouseListenerSidePanel() {
+		
+		MouseListener ml = new MouseListener() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+					System.out.print("Mouse clicked...");
+					int b = e.getButton();
+					// System.out.println(e);
+					switch (b) {
+					case MouseEvent.BUTTON1:
+						int posX = e.getX();
+						int posY = e.getY();
+						
+						break;
+					case MouseEvent.BUTTON2:
+						break;
+					case MouseEvent.BUTTON3:
+						break;
+					default:
+						break;
+					}
+				}
+			};
 	}
 
 	/**
@@ -368,14 +421,26 @@ public class Game extends JFrame {
 	 * changePlayer
 	 */
 	private void bn_changePlayerAction() {
-		// TODO
+		currentPlayerData.incNumberOfMoves();
+		this.changePlayer();
 	}
 
 	/**
 	 * change player actions
 	 */
 	private void changePlayer() {
-		// TODO
+		if(currentPlayerData.equals(playerAData)) {
+			currentPlayerData = playerBData;
+			isPlayerAToPlay = false;
+			playerAData.setPlayerPanelActive(isPlayerAToPlay);
+			playerBData.setPlayerPanelActive(true);
+		}else {
+			currentPlayerData = playerAData;
+			isPlayerAToPlay = true;
+			playerBData.setPlayerPanelActive(!isPlayerAToPlay);
+			playerAData.setPlayerPanelActive(isPlayerAToPlay);
+		}
+		
 	}
 
 	/**
@@ -385,7 +450,8 @@ public class Game extends JFrame {
 		// TODO Adicionar a decisão
 		int n = JOptionPane.showConfirmDialog(this, "Are you sure about your decision?", "Restart Game Confirmation", JOptionPane.YES_NO_OPTION);
 		if (n == JOptionPane.YES_OPTION) {
-
+			init();
+			//board.resetBoard();
 		} else if (n == JOptionPane.NO_OPTION) {
 			return;
 		}
@@ -504,44 +570,47 @@ JOptionPane.YES_NO_OPTION);
 	 * move hive UP, if it can be moved
 	 */
 	private void moveHiveUp() {
-		// TODO
-		System.out.println("teste");
-
+		//List<Piece> piceTomove = board.getPiecesFrom
 	}
 
 	/**
 	 * move hive DOWN, if it can
 	 */
 	private void moveDown() {
-		// TODO
+		BoardPlace legit = board.getBoardPlace(0, 0);
+		legit.migrateTo(Direction.S);
 	}
 
 	/**
 	 * move hive NO, if it can
 	 */
 	private void moveNO() {
-		// TODO
+		BoardPlace legit = board.getBoardPlace(Board.DIMX-1, Board.DIMY-1);
+		legit.migrateTo(Direction.NO);
 	}
 
 	/**
 	 * move hive NE, if it can
 	 */
 	private void moveNE() {
-		// TODO
+		BoardPlace legit = board.getBoardPlace(0, Board.DIMY-1);
+		legit.migrateTo(Direction.NE);
 	}
 
 	/**
 	 * move hive SO, if it can
 	 */
 	private void moveSO() {
-		// TODO
+		BoardPlace legit = board.getBoardPlace(Board.DIMX-1, 0);
+		legit.migrateTo(Direction.SO);
 	}
 
 	/**
 	 * move hive SE, if it can
 	 */
 	private void moveSE() {
-		// TODO
+		BoardPlace legit = board.getBoardPlace(0, 0);
+		legit.migrateTo(Direction.SE);
 	}
 
 }

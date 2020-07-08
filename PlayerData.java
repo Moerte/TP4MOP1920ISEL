@@ -3,6 +3,9 @@ package tps.tp4;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -40,6 +43,7 @@ public class PlayerData {
 	private JLabel playerLabel;
 	private HiveLabel queenBeeLabel = null;
 	private QueenBee queenBee = null;
+	private JLabel piece= null;
 
 	private int numberOfPiecesOnBoard = 0;
 	private int numberOfMoves = 0;
@@ -78,7 +82,8 @@ public class PlayerData {
 		playerLabel = new JLabel("Player " + player, SwingConstants.CENTER);
 		playerLabel.setPreferredSize(dim);
 		playerLabel.setOpaque(true);
-		playerLabel.setBackground(INACTIVEPLAYERCOLOR);
+		if(isPlayerA)playerLabel.setBackground(ACTIVEPLAYERCOLOR);
+		else playerLabel.setBackground(INACTIVEPLAYERCOLOR);
 		sidePanel.add(playerLabel);
 
 		JLabel playerColor = new JLabel("Player Color", SwingConstants.CENTER);
@@ -92,10 +97,8 @@ public class PlayerData {
 		JPanel piecesPanel = new JPanel(new GridLayout(11, 1, 0, 0));
 		for (PiecesAndItsNumber p : ListaDePecas) {
 			Piece addedPiece = p.getTipo().createNew(game, isPlayerA);
-			JLabel piece = new JLabel();
 			for (int i = 0; i < p.getnPecas(); i++) {
 				HiveLabel pieceLabel = new HiveLabel(addedPiece, game);
-				//piece = pieceLabel.getPiece().getName(), SwingConstants.CENTER);
 				piece = new JLabel();
 				piece.setText(pieceLabel.getPiece().getName());
 				piece.setHorizontalAlignment(SwingConstants.CENTER);
@@ -103,20 +106,23 @@ public class PlayerData {
 				piece.setForeground(Color.WHITE);
 				piece.setBackground(pieceLabel.getPiece().getColor());
 				piece.setOpaque(true);
-				//piecesPanel.add(piece);
+				piece.addMouseListener(new MouseAdapter() {
+	                @Override
+	                public void mouseClicked(MouseEvent e) {
+	                    onMouseClicked(e, pieceLabel);
+	                }
+	            });
 				if(pieceLabel.getPiece().getName() == "QueenBee") {
 					queenBeeLabel = pieceLabel;
 					queenBee = (QueenBee)pieceLabel.getPiece();
 				}
-				
+				piecesPanel.add(piece);
 			}
-			//sidePanel.add(piecesPanel);
-			piecesPanel.add(piece);
 		}
 		sidePanel.add(piecesPanel);
 		
-		
-		movesLabel = new JLabel(String.valueOf(numberOfMoves), SwingConstants.CENTER);
+		String bjoras = String.valueOf(numberOfMoves);
+		movesLabel = new JLabel(bjoras, SwingConstants.CENTER);
 		movesLabel.setOpaque(true);
 		movesLabel.setBackground(Color.GREEN);
 		movesLabel.setPreferredSize(dim);
@@ -124,13 +130,17 @@ public class PlayerData {
 
 		// End Player
 	}
+	
+	private void onMouseClicked(MouseEvent e, HiveLabel p) {        
+            
+	}
 
 	/**
 	 * Initializes the counters and the labels
 	 */
 	public void init(boolean playerIsActive) {
 		// TODO
-
+		
 	}
 
 	/**
@@ -151,7 +161,8 @@ public class PlayerData {
 	 * increment number of moves of this player
 	 */
 	void incNumberOfMoves() {
-		this.numberOfMoves++;
+		numberOfMoves++;
+		displayNumberOfMoves();
 	}
 
 	/**
@@ -201,7 +212,8 @@ public class PlayerData {
 	 * set this player background as current player or not
 	 */
 	public void setPlayerPanelActive(boolean active) {
-		playerLabel.setBackground(ACTIVEPLAYERCOLOR);
+		if (active)playerLabel.setBackground(ACTIVEPLAYERCOLOR);
+		else playerLabel.setBackground(INACTIVEPLAYERCOLOR);
 	}
 
 	/**
@@ -280,7 +292,7 @@ class HiveLabel extends JLabel {
 	 * 
 	 */
 	public void init() {
-		
+		this.setToNormal();
 
 	}
 
@@ -296,15 +308,16 @@ class HiveLabel extends JLabel {
 	 * 
 	 */
 	public void setToNormal() {
-		// TODO
+		setBorder(BorderFactory.createLineBorder(p.getColor()));
+		isDeactivated = false;
 	}
 
 	/**
 	 * 
 	 */
 	public void deactivate() {
-		setBorder(selBorder);
-		this.isDeactivated = false;
+		setBorder(unselBorder);
+		this.isDeactivated = true;
 	}
 
 	/**
