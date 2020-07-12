@@ -2,18 +2,17 @@ package tps.tp4;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Scanner;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -21,14 +20,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
-import javax.swing.border.LineBorder;
 
-import classcode.p15Swing.p02buildedLayouts.ProportionalLayout;
 import tps.layouts.CenterLayout;
 import tps.tp4.pieces.Piece;
 import tps.tp4.pieces.Spider;
@@ -111,7 +106,7 @@ public class Game extends JFrame {
 	 * load resources: fonts, images, sounds
 	 */
 	private void loadResources() {
-		// TODO Nao percebo este metodo
+
 		String fontType = "Comic Sans MS";
 		int size = 20;
 		this.fontCurrentPlayer = new Font(fontType, Font.BOLD, size);
@@ -125,8 +120,7 @@ public class Game extends JFrame {
 		setTitle("Hive Game");
 		setSize(1000, 700);
 		loadResources();
-		
-
+		this.isPlayerAToPlay = true;
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setLayout(new CenterLayout());
 
@@ -135,22 +129,22 @@ public class Game extends JFrame {
 		board = new Board(this, fontPieces);
 		add(board, BorderLayout.CENTER);
 
-//		// add a spider - just to check
-//		Spider s = new Spider(this, true);
-//		getBoard().addPiece(s, 4, 5);
-
-
-		// Playable Buttons
 		controlPanel = new JPanel();
 		controlPanel.setSize(700, 50);
-		//controlPanel.setLayout();
 
+		Game that = this;
 		ActionListener al = new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				switch (e.getActionCommand()) {
 				case "start_again":
-					startAgain();
+					int n = JOptionPane.showConfirmDialog(that, "Are you sure about your decision?",
+							"Restart Game Confirmation", JOptionPane.YES_NO_OPTION);
+					if (n == JOptionPane.YES_OPTION) {
+						startAgain();
+					} else {
+						return;
+					}
 					break;
 				case "move_up":
 					moveHiveUp();
@@ -226,15 +220,13 @@ public class Game extends JFrame {
 		controlPanel.add(bn_giveUp);
 
 		// TODO colocar isto por baixo dos botoes...
-		JTextField log = new JTextField();
-		log.setEnabled(false);
-		controlPanel.add(log, BorderLayout.PAGE_END);
+		controlPanelOut = new JPanel();
+		lb_message = new JLabel("Cenas");
+		lb_message.setPreferredSize(new Dimension(150, 20));
+		controlPanelOut.add(lb_message);
+		add(controlPanelOut, BorderLayout.SOUTH);
 
 		add(controlPanel, BorderLayout.SOUTH);
-		// End Playable buttons
-
-		// TODO
-		// build menu
 
 		playerAData = new PlayerData(this, true);
 		JPanel panelA = new JPanel();
@@ -246,66 +238,17 @@ public class Game extends JFrame {
 		panelB = playerBData.getSidePanel();
 		add(panelB, BorderLayout.EAST);
 
+		buildMenu();
+		currentPlayerData = playerAData;
+
 		// Main Label
-		mainLabel = new JLabel("HIVE GAME: Current Player -> " + getPlayerData(true), SwingConstants.CENTER);
+		mainLabel = new JLabel("HIVE GAME: Current Player -> " + "Player A", SwingConstants.CENTER);
 		mainLabel.setFont(this.fontCurrentPlayer);
 		mainLabel.setOpaque(true);
 		mainLabel.setBackground(Color.LIGHT_GRAY);
 		add(mainLabel, BorderLayout.NORTH);
 
-		buildMenu();
-		currentPlayerData = playerAData;
-
 		setVisible(true);
-	}
-	
-	private void mouseListenerSidePanel() {
-		
-		MouseListener ml = new MouseListener() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-					System.out.print("Mouse clicked...");
-					int b = e.getButton();
-					// System.out.println(e);
-					switch (b) {
-					case MouseEvent.BUTTON1:
-						int posX = e.getX();
-						int posY = e.getY();
-						
-						break;
-					case MouseEvent.BUTTON2:
-						break;
-					case MouseEvent.BUTTON3:
-						break;
-					default:
-						break;
-					}
-				}
-			};
 	}
 
 	/**
@@ -325,8 +268,8 @@ public class Game extends JFrame {
 				String menuItemText = mi.getText();
 				switch (menuItemText) {
 				case "Restart Game":
+					enableControlButtons(true);
 					startAgain();
-					System.out.println("testing...Menu");
 					break;
 				case "View Scores":
 					viewScores();
@@ -335,7 +278,7 @@ public class Game extends JFrame {
 					about();
 					break;
 				case "Help":
-					
+
 					break;
 				}
 			}
@@ -363,13 +306,13 @@ public class Game extends JFrame {
 		menu.add(viewScoresItem);
 
 		menu.addSeparator();
-		
+
 		// TODO Adicionar foto ao menu
 		aboutItem = new JMenuItem("About", KeyEvent.VK_A);
 		aboutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
 		aboutItem.addActionListener(al);
 		menu.add(aboutItem);
-		
+
 		JMenuItem helpItem = new JMenuItem("Help", KeyEvent.VK_H);
 		helpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.CTRL_MASK));
 		helpItem.addActionListener(al);
@@ -421,7 +364,6 @@ public class Game extends JFrame {
 	 * changePlayer
 	 */
 	private void bn_changePlayerAction() {
-		currentPlayerData.incNumberOfMoves();
 		this.changePlayer();
 	}
 
@@ -429,39 +371,94 @@ public class Game extends JFrame {
 	 * change player actions
 	 */
 	private void changePlayer() {
-		if(currentPlayerData.equals(playerAData)) {
+		if (currentPlayerData.getNumberOfMoves() == MAX_NUMBER_OF_MOVES_TO_PLACE_QUEENBEE - 1
+				&& !currentPlayerData.isQueenBeeAlreadyOnBoard()) {
+			System.out.println("You need to place the QueenBee.");
+			lb_message.setText("You need to place the QueenBee.");
+			if (!placingQueenBee)
+				return;
+		}
+		currentPlayerData.incNumberOfMoves();
+		if (currentPlayerData.equals(playerAData)) {
 			currentPlayerData = playerBData;
 			isPlayerAToPlay = false;
 			playerAData.setPlayerPanelActive(isPlayerAToPlay);
 			playerBData.setPlayerPanelActive(true);
-		}else {
+			mainLabel.setText("HIVE GAME: Current Player -> Player B");
+		} else {
 			currentPlayerData = playerAData;
 			isPlayerAToPlay = true;
 			playerBData.setPlayerPanelActive(!isPlayerAToPlay);
 			playerAData.setPlayerPanelActive(isPlayerAToPlay);
+			mainLabel.setText("HIVE GAME: Current Player -> Player A");
 		}
-		
+		if (currentHiveLabel != null) {
+			currentHiveLabel.setToNormal();
+			currentHiveLabel = null;
+		}
+
 	}
 
 	/**
 	 * start again actions
 	 */
 	private void startAgain() {
-		// TODO Adicionar a decisão
-		int n = JOptionPane.showConfirmDialog(this, "Are you sure about your decision?", "Restart Game Confirmation", JOptionPane.YES_NO_OPTION);
-		if (n == JOptionPane.YES_OPTION) {
-			init();
-			//board.resetBoard();
-		} else if (n == JOptionPane.NO_OPTION) {
-			return;
+
+		Component[] playAComponents = playerAData.getSidePanel().getComponents();
+		Component[] playBComponents = playerBData.getSidePanel().getComponents();
+		this.labelRestart(playAComponents);
+		this.labelRestart(playBComponents);
+		playerAData.setNumberOfMoves(0);
+		playerAData.setNumberOfPiecesOnBoard(0);
+		playerBData.setNumberOfMoves(0);
+		playerBData.setNumberOfPiecesOnBoard(0);
+		if (!isPlayerAToPlay) {
+			currentPlayerData = playerAData;
+			currentPlayerData.setPlayerPanelActive(true);
+			playerBData.setPlayerPanelActive(false);
+			isPlayerAToPlay = true;
+			mainLabel.setText("HIVE GAME: Current Player -> Player A");
+		}
+		board.resetBoard();
+		board.repaint();
+		if(currentPiece != null) board.getBoardPlace(currentPiece.getX(), currentPiece.getY()).setSelected(false);
+		currentHiveLabel = null;
+		currentPiece = null;
+	}
+
+	/**
+	 * TODO
+	 * 
+	 * @param component
+	 */
+	private void labelRestart(Component[] component) {
+		for (Component c : component) {
+			if (c instanceof JPanel) {
+				JPanel jp = (JPanel) c;
+				Component[] piecesLabel = jp.getComponents();
+				for (Component x : piecesLabel) {
+					HiveLabel z = (HiveLabel) x;
+					z.setToNormal();
+				}
+			}
+			c.setEnabled(true);
 		}
 	}
 
 	private void giveUp() {
-		// TODO Adicionar a decisão
 		int n = JOptionPane.showConfirmDialog(this, "Are you that chicken?", "Give Up Confirmation",
-JOptionPane.YES_NO_OPTION);
+				JOptionPane.YES_NO_OPTION);
 		if (n == JOptionPane.YES_OPTION) {
+			this.endOfGame = true;
+			
+			if (this.checkFinishGame()) {
+				board.getBoardPlace(currentPiece.getX(), currentPiece.getY()).setSelected(false);
+				currentHiveLabel = null;
+				currentPiece = null;
+				this.doFinishGameActions();
+			}
+			
+			
 			
 		} else if (n == JOptionPane.NO_OPTION) {
 			return;
@@ -472,22 +469,136 @@ JOptionPane.YES_NO_OPTION);
 	 * check if coordinate x,y only have friendly neighbor of current player
 	 */
 	private boolean onlyHaveFriendlyNeighbors(int x, int y) {
-		// TODO
-		return false;
+		boolean enemyNeib = false;
+		for (Direction d : Direction.values()) {
+			Point p = Board.getNeighbourPoint(x, y, d);
+			if (p == null)
+				continue;
+			int k = (int) p.getX();
+			int j = (int) p.getY();
+			Piece piece = board.getPiece(k, j);
+			if(piece == null) continue;
+			if (board.getPiece(k, j).isFromPlayerA() && currentPlayerData.equals(playerAData)) {
+				enemyNeib = true;
+			}else if(!board.getPiece(k, j).isFromPlayerA() && currentPlayerData.equals(playerBData)) {
+				enemyNeib = true;
+			}else if(board.getPiece(k, j).isFromPlayerA() && currentPlayerData.equals(playerBData)) {
+				enemyNeib = false;
+				break;
+			}else if(!board.getPiece(k, j).isFromPlayerA() && currentPlayerData.equals(playerAData)) {
+				enemyNeib = false;
+				break;
+			}
+		}
+		System.out.println("CEnas =>" +enemyNeib);
+		return enemyNeib;
 	}
+	
 
 	/**
 	 * a click on the board
 	 */
 	public void clickOnBoard(int x, int y) {
-		// TODO
+		if (currentPlayerData.getNumberOfMoves() == MAX_NUMBER_OF_MOVES_TO_PLACE_QUEENBEE - 1
+				&& !currentPlayerData.isQueenBeeAlreadyOnBoard()) {
+			lb_message.setText("You need to place the QueenBee.");
+			if (!placingQueenBee)
+				return;
+		}
+		if (currentHiveLabel == null) {
+			Piece p = board.getPiece(x, y);
+			if (p == null)
+				return;
+			if(currentPiece != null) {
+				System.out.println("Cheguei");
+				//currentPiece.moveTo(x, y);
+				return;
+			}
+			else {
+				currentPiece = p; 
+				board.getBoardPlace(x, y).setSelected(true);
+				return;
+			}
+		}
+		if (currentPiece != null) {
+			System.out.println("Cheguei 222");
+			return;
+			//currentPiece.moveTo(x, y);
+		}
+		if (isPlayerAToPlay) {
+			if (currentPlayerData.getNumberOfMoves() != 0 && !this.onlyHaveFriendlyNeighbors(x, y)) {
+				return;
+				// TODO Posiçao invalida, LOG : Não pode jogar
+			} else {
+				Piece p = board.getPiece(x, y);
+				if (p != null) {
+					return;
+					// TODO LOG: Todas as peças tem de ser jogadas em campo (não pode ser por cima
+					// de outra peça)
+				} else {
+					// TODO Podes jogar a peça
+				}
+			}
+		} else {
+			if (currentPlayerData.getNumberOfMoves() == 0) {
+				boolean validNeib = false;
+				for (Direction d : Direction.values()) {
+					Point p = Board.getNeighbourPoint(x, y, d);
+					if (p == null)
+						continue;
+					int k = (int) p.getX();
+					int j = (int) p.getY();
+					if (board.getPiece(k, j) != null)
+						validNeib = true;
+				}
+				if (validNeib) {
+					// TODO Podes jogar
+				} else {
+					return;
+					// TODO LOG: Tens de jogar adjacente a outra peça
+				}
+			}else if(!this.onlyHaveFriendlyNeighbors(x, y)) {
+				return;
+				// TODO Posiçao invalida, LOG : Não pode jogar
+			}else {
+				Piece p = board.getPiece(x, y);
+				if (p != null) {
+					return;
+					// TODO LOG: Todas as peças tem de ser jogadas em campo (não pode ser por cima
+					// de outra peça)
+				} else {
+					// TODO Podes jogar a peça
+				}
+			}
+		}
+		//currentPiece = currentHiveLabel.getPiece();
+		board.addPiece(currentHiveLabel.getPiece(), x, y);
+		board.repaint();
+		currentHiveLabel.deactivate();
+		currentHiveLabel = null;
+		changePlayer();
 	}
 
 	/**
 	 * a click on a label on side panel
 	 */
 	public void clickOnPieceLabelOnSidePanel(HiveLabel hl) {
-		// TODO
+		if (hl.isDeactivated())
+			return;
+		if (hl.getPiece().isFromPlayerA() != isPlayerAToPlay)
+			return;
+		if (currentHiveLabel != null) {
+			currentHiveLabel.setToNormal();
+			if(placingQueenBee) placingQueenBee = false;
+			if (currentHiveLabel.equals(hl)) {
+				currentHiveLabel = null;
+				return;
+			}
+		}
+		currentHiveLabel = hl;
+		currentHiveLabel.activate();
+		if (currentHiveLabel.getPiece().getName().equalsIgnoreCase("queenbee"))
+			placingQueenBee = true;
 	}
 
 	/**
@@ -517,8 +628,35 @@ JOptionPane.YES_NO_OPTION);
 	 * the NE and NO places occupied, cannot move to N.
 	 */
 	public boolean canPhysicallyMoveTo(int x, int y, Direction d) {
-		// TODO
+		switch (d) {
+		case N:
+			return this.physicalMove(x, y, Direction.NE, Direction.NO);
+		case NE:
+			return this.physicalMove(x, y, Direction.N, Direction.SE);
+		case NO:
+			return this.physicalMove(x, y, Direction.N, Direction.SO);
+		case S:
+			return this.physicalMove(x, y, Direction.SE, Direction.SO);
+		case SE:
+			return this.physicalMove(x, y, Direction.NE, Direction.S);
+		case SO:
+			return this.physicalMove(x, y, Direction.S, Direction.NO);
+		default:
+			break;
+		}
 		return false;
+	}
+
+	private boolean physicalMove(int x, int y, Direction d1, Direction d2) {
+		Point pt1 = Board.getNeighbourPoint(x, y, d1);
+		Point pt2 = Board.getNeighbourPoint(x, y, d2);
+		if (pt1 == null || pt2 == null)
+			return true;
+		Piece p1 = board.getPiece((int) pt1.getX(), (int) pt1.getY());
+		Piece p2 = board.getPiece((int) pt2.getX(), (int) pt2.getY());
+		if (p1 != null && p2 != null)
+			return false;
+		return true;
 	}
 
 	/**
@@ -533,14 +671,22 @@ JOptionPane.YES_NO_OPTION);
 	 * with: remPiece and addPiece.
 	 */
 	public void moveUnconditional(Piece p, int x, int y) {
-		// TODO
+		board.remPiece(p);
+		board.addPiece(p, x, y);
+		p.setXY(x, y);
 	}
 
 	/**
 	 * check if end of game - update playerAWon and/or playerBWon states
 	 */
 	private boolean checkFinishGame() {
-		// TODO
+		if (endOfGame) {
+			if (isPlayerAToPlay)
+				playerBData.setPlayerWon(true);
+			else
+				playerAData.setPlayerWon(true);
+			return true;
+		}
 		return false;
 	}
 
@@ -548,29 +694,81 @@ JOptionPane.YES_NO_OPTION);
 	 * check if queen of received player is surrounded
 	 */
 	private boolean checkFinishGame(boolean playerA) {
-		// TODO
-		return false;
+		if (playerA) {
+			return this.checkSurroundPos(playerAData);
+		} else {
+			return this.checkSurroundPos(playerBData);
+		}
+	}
+
+	private boolean checkSurroundPos(PlayerData player) {
+		Piece pt = player.getQueenBee();
+		if (pt == null)
+			return false;
+		int x = pt.getX();
+		int y = pt.getY();
+		boolean emptyNeib = false;
+		for (Direction d : Direction.values()) {
+			Point p = Board.getNeighbourPoint(x, y, d);
+			if (p == null)
+				continue;
+			int k = (int) p.getX();
+			int j = (int) p.getY();
+			if (board.getPiece(k, j) == null) {
+				emptyNeib = true;
+				break;
+			}
+		}
+		return !emptyNeib;
 	}
 
 	/**
 	 * do end of game actions
 	 */
 	private void doFinishGameActions() {
-		// TODO
+		boolean checkWinner = playerAData.playerWon();
+		JOptionPane.showMessageDialog(this, "Congratulations Player " + (checkWinner ? "A" : "B"), "Winner Panel",
+				JOptionPane.INFORMATION_MESSAGE);
+		enableControlButtons(false);
 	}
 
 	/**
 	 * change state of general buttons
 	 */
 	private void enableControlButtons(boolean enable) {
-		// TODO
+		Component[] container = controlPanel.getComponents();
+		Component[] playerAContainer = playerAData.getSidePanel().getComponents();
+		Component[] playerBContainer = playerBData.getSidePanel().getComponents();
+
+		for (Component c : container) {
+			c.setEnabled(enable);
+		}
+		this.deactivateLabels(playerBContainer, enable);
+		this.deactivateLabels(playerAContainer, enable);
+		board.resetBoard();
+		board.repaint();
+	}
+
+	private void deactivateLabels(Component[] component, boolean enable) {
+		for (Component c : component) {
+			if (c instanceof JPanel) {
+				JPanel jp = (JPanel) c;
+				Component[] piecesLabel = jp.getComponents();
+				for (Component x : piecesLabel) {
+					x.setEnabled(enable);
+					HiveLabel z = (HiveLabel) x;
+					z.deactivate();
+				}
+			}
+			c.setEnabled(enable);
+		}
 	}
 
 	/**
 	 * move hive UP, if it can be moved
 	 */
 	private void moveHiveUp() {
-		//List<Piece> piceTomove = board.getPiecesFrom
+		// TODO List<Piece> piceTomove = board.getPiecesFrom
 	}
 
 	/**
@@ -585,7 +783,7 @@ JOptionPane.YES_NO_OPTION);
 	 * move hive NO, if it can
 	 */
 	private void moveNO() {
-		BoardPlace legit = board.getBoardPlace(Board.DIMX-1, Board.DIMY-1);
+		BoardPlace legit = board.getBoardPlace(Board.DIMX - 1, Board.DIMY - 1);
 		legit.migrateTo(Direction.NO);
 	}
 
@@ -593,7 +791,7 @@ JOptionPane.YES_NO_OPTION);
 	 * move hive NE, if it can
 	 */
 	private void moveNE() {
-		BoardPlace legit = board.getBoardPlace(0, Board.DIMY-1);
+		BoardPlace legit = board.getBoardPlace(0, Board.DIMY - 1);
 		legit.migrateTo(Direction.NE);
 	}
 
@@ -601,7 +799,7 @@ JOptionPane.YES_NO_OPTION);
 	 * move hive SO, if it can
 	 */
 	private void moveSO() {
-		BoardPlace legit = board.getBoardPlace(Board.DIMX-1, 0);
+		BoardPlace legit = board.getBoardPlace(Board.DIMX - 1, 0);
 		legit.migrateTo(Direction.SO);
 	}
 

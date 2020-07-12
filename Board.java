@@ -66,22 +66,9 @@ public class Board extends JPanel {
 		for (int y = 0; y < DIMY; y++) {
 			for (int x = 0; x < DIMX; x++) {
 				board[x][y] = new BoardPlace(this, x, y);
-				;
+				
 			}
 		}
-
-//		// added one queen, to have some visualization
-//		QueenBee q = new QueenBee(game, true);
-//		addPiece(q, 1,7);
-
-	}
-
-	/**
-	 * method called by the mouseListener of the board. Should check if the x, y
-	 * received is inside any of the polygons. In affirmative case should call
-	 * game.clickOnBoard with the (x, y) of the BoardPlace clicked
-	 */
-	private void clickOnBoard(int xPix, int yPix) {
 		MouseListener ml = new MouseListener() {
 
 			@Override
@@ -110,13 +97,13 @@ public class Board extends JPanel {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				System.out.print("Mouse clicked...");
 				int b = e.getButton();
 				// System.out.println(e);
 				switch (b) {
 				case MouseEvent.BUTTON1:
 					int posX = e.getX();
 					int posY = e.getY();
+					clickOnBoard(posX, posY);
 					break;
 				case MouseEvent.BUTTON2:
 					break;
@@ -126,7 +113,25 @@ public class Board extends JPanel {
 					break;
 				}
 			}
+			
+			
 		};
+		addMouseListener(ml);
+
+	}
+
+	/**
+	 * method called by the mouseListener of the board. Should check if the x, y
+	 * received is inside any of the polygons. In affirmative case should call
+	 * game.clickOnBoard with the (x, y) of the BoardPlace clicked
+	 */
+	private void clickOnBoard(int xPix, int yPix) {
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++) {
+				if(board[i][j].isInsideBoardPlace(xPix, yPix))
+					game.clickOnBoard(i, j);
+			}
+		}
 
 	}
 
@@ -153,7 +158,6 @@ public class Board extends JPanel {
 	 * the BoardPlaces
 	 */
 	public void paintComponent(Graphics g) {
-		// TODO
 		super.paintComponent(g);
 		for (int y = 0; y < DIMY; y++) {
 			for (int x = 0; x < DIMX; x++) {
@@ -231,7 +235,8 @@ public class Board extends JPanel {
 	 * returns the (tail) piece on board[x][y]
 	 */
 	public Piece getPiece(int x, int y) {
-		return board[x][y].getPiece();
+		if(isInside(x, y))return board[x][y].getPiece();
+		else return null;
 	}
 
 	/**

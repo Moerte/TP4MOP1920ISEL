@@ -1,10 +1,9 @@
 package tps.tp4;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.Polygon;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import tps.tp4.Game.Direction;
@@ -123,15 +122,15 @@ public class BoardPlace {
 	 * set selected state
 	 */
 	public void setSelected(boolean selected) {
-		// TODO verificar se funciona
+		// TODO
 		this.selected = selected;
+		board.repaint();
 	}
 
 	/**
 	 * get selected state
 	 */
 	public boolean isSelected() {
-		// TODO verificar se funciona
 		return selected;
 	}
 
@@ -154,6 +153,7 @@ public class BoardPlace {
 	 * received direction. To be used is move HIVE up, down, NO, ....
 	 */
 	public void migrateTo(Direction d) {
+		// TODO
 		switch(d) {
 		case NO : 
 		}
@@ -173,15 +173,18 @@ public class BoardPlace {
 			// TODO
 			g.setColor(getPiece().getColor());
 			g.fillPolygon(polygon);
-			g.setColor(Color.BLUE);
-			g.drawString(String.valueOf(getPiece().getClass().getSimpleName().charAt(0)), baseX, baseY);
+			if(getPiece().isFromPlayerA()) g.setColor(Color.BLACK);
+			else g.setColor(Color.LIGHT_GRAY);
+			g.setFont(new Font("default", Font.BOLD, 14));
+			g.drawString(String.valueOf(getPiece().getClass().getSimpleName().charAt(0)), baseX+7, baseY+17);
 			
 		}
 
 		// if selected, draw selection
 		if (isSelected()) {
 			g.setColor(PIECESELECTIONCOLOR);
-			g.fillPolygon(polygon);
+			//g.fillPolygon(selPolygon);
+			g.drawPolygon(polygon);
 			// TODO
 		}
 	}

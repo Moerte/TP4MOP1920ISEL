@@ -38,17 +38,16 @@ public class PlayerData {
 			new PiecesAndItsNumber(PType.GRASHOPPER, 2), new PiecesAndItsNumber(PType.SPIDER, 3),
 			new PiecesAndItsNumber(PType.ANT, 3) };
 
-	private JPanel sidePanel = new JPanel();
+	private JPanel sidePanel;
 	private JLabel movesLabel;
 	private JLabel playerLabel;
-	private HiveLabel queenBeeLabel = null;
-	private QueenBee queenBee = null;
-	private JLabel piece= null;
+	private HiveLabel queenBeeLabel;
+	private QueenBee queenBee;
 
-	private int numberOfPiecesOnBoard = 0;
-	private int numberOfMoves = 0;
+	private int numberOfPiecesOnBoard;
+	private int numberOfMoves;
 
-	private boolean playerWon = false;
+	private boolean playerWon;
 
 	/**
 	 * auxiliary class
@@ -75,48 +74,29 @@ public class PlayerData {
 	 * Constructor - should build the side panel for the player
 	 */
 	public PlayerData(Game game, boolean isPlayerA) {
+		this.init(isPlayerA);
 		
-		Dimension dim = new Dimension(150, 20);
-		// TODO
-		String player = isPlayerA == true ? "A" : "B";
-		playerLabel = new JLabel("Player " + player, SwingConstants.CENTER);
-		playerLabel.setPreferredSize(dim);
-		playerLabel.setOpaque(true);
-		if(isPlayerA)playerLabel.setBackground(ACTIVEPLAYERCOLOR);
-		else playerLabel.setBackground(INACTIVEPLAYERCOLOR);
-		sidePanel.add(playerLabel);
-
-		JLabel playerColor = new JLabel("Player Color", SwingConstants.CENTER);
-		playerColor.setPreferredSize(dim);
-		playerColor.setForeground(Color.WHITE);
-		playerColor.setBackground(Game.getColorFromPlayer(isPlayerA));
-		playerColor.setOpaque(true);
-		sidePanel.add(playerColor);
-		
-		// TODO melhorar
 		JPanel piecesPanel = new JPanel(new GridLayout(11, 1, 0, 0));
 		for (PiecesAndItsNumber p : ListaDePecas) {
 			Piece addedPiece = p.getTipo().createNew(game, isPlayerA);
 			for (int i = 0; i < p.getnPecas(); i++) {
 				HiveLabel pieceLabel = new HiveLabel(addedPiece, game);
-				piece = new JLabel();
-				piece.setText(pieceLabel.getPiece().getName());
-				piece.setHorizontalAlignment(SwingConstants.CENTER);
-				piece.setPreferredSize(dim);
-				piece.setForeground(Color.WHITE);
-				piece.setBackground(pieceLabel.getPiece().getColor());
-				piece.setOpaque(true);
-				piece.addMouseListener(new MouseAdapter() {
+				pieceLabel.setText(pieceLabel.getPiece().getName());
+				pieceLabel.setHorizontalAlignment(SwingConstants.CENTER);
+				pieceLabel.setPreferredSize(new Dimension(150, 20));
+				pieceLabel.setForeground(Color.WHITE);
+				pieceLabel.setBackground(pieceLabel.getPiece().getColor());
+				pieceLabel.setOpaque(true);
+				pieceLabel.addMouseListener(new MouseAdapter() {
 	                @Override
 	                public void mouseClicked(MouseEvent e) {
-	                    onMouseClicked(e, pieceLabel);
+	                	game.clickOnPieceLabelOnSidePanel(pieceLabel);
 	                }
 	            });
-				if(pieceLabel.getPiece().getName() == "QueenBee") {
+				if(pieceLabel.getPiece().getName().equalsIgnoreCase("QueenBee")) {
 					queenBeeLabel = pieceLabel;
-					queenBee = (QueenBee)pieceLabel.getPiece();
 				}
-				piecesPanel.add(piece);
+				piecesPanel.add(pieceLabel);
 			}
 		}
 		sidePanel.add(piecesPanel);
@@ -125,21 +105,39 @@ public class PlayerData {
 		movesLabel = new JLabel(bjoras, SwingConstants.CENTER);
 		movesLabel.setOpaque(true);
 		movesLabel.setBackground(Color.GREEN);
-		movesLabel.setPreferredSize(dim);
+		movesLabel.setPreferredSize(new Dimension(150, 20));
 		sidePanel.add(movesLabel);
 
-		// End Player
-	}
-	
-	private void onMouseClicked(MouseEvent e, HiveLabel p) {        
-            
 	}
 
 	/**
 	 * Initializes the counters and the labels
 	 */
 	public void init(boolean playerIsActive) {
-		// TODO
+		numberOfMoves = 0;
+		numberOfPiecesOnBoard = 0;
+		queenBee = null;
+		queenBeeLabel = null;
+		sidePanel = new JPanel();
+		playerWon = false;
+		
+		Dimension dim = new Dimension(150, 20);
+		String player = playerIsActive == true ? "A" : "B";
+		playerLabel = new JLabel("Player " + player, SwingConstants.CENTER);
+		playerLabel.setPreferredSize(dim);
+		playerLabel.setOpaque(true);
+		if(playerIsActive)playerLabel.setBackground(ACTIVEPLAYERCOLOR);
+		else playerLabel.setBackground(INACTIVEPLAYERCOLOR);
+		sidePanel.add(playerLabel);
+
+		JLabel playerColor = new JLabel("Player Color", SwingConstants.CENTER);
+		playerColor.setPreferredSize(dim);
+		playerColor.setForeground(Color.WHITE);
+		playerColor.setBackground(Game.getColorFromPlayer(playerIsActive));
+		playerColor.setOpaque(true);
+		sidePanel.add(playerColor);
+	
+		
 		
 	}
 
@@ -177,6 +175,7 @@ public class PlayerData {
 	 */
 	void setNumberOfMoves(int n) {
 		this.numberOfMoves = n;
+		this.displayNumberOfMoves();
 	}
 
 	/**
@@ -220,8 +219,7 @@ public class PlayerData {
 	 * check if queen bee of this player is already on board
 	 */
 	public boolean isQueenBeeAlreadyOnBoard() {
-		// TODO
-		return false;
+		return queenBee != null;
 	}
 
 	/**
@@ -272,6 +270,8 @@ class HiveLabel extends JLabel {
 	public HiveLabel(Piece p, Game game) {
 		this.p = p;
 		this.game = game;
+		init();
+		
 	}
 
 	/**
@@ -301,7 +301,6 @@ class HiveLabel extends JLabel {
 	 */
 	public void activate() {
 		setBorder(selBorder);
-		this.isDeactivated = false;
 	}
 
 	/**
@@ -309,7 +308,7 @@ class HiveLabel extends JLabel {
 	 */
 	public void setToNormal() {
 		setBorder(BorderFactory.createLineBorder(p.getColor()));
-		isDeactivated = false;
+		this.isDeactivated = false;
 	}
 
 	/**

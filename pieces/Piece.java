@@ -22,7 +22,6 @@ public abstract class Piece {
 	 * constructor
 	 */
 	public Piece(String name, Color color, Game game, boolean isFromPlayerA) {
-		// TODO Faltam as validações
 		this.name = name;
 		this.game = game;
 		this.isFromPlayerA = isFromPlayerA;
@@ -52,8 +51,7 @@ public abstract class Piece {
 	 * get if piece if from player A or not
 	 */
 	public boolean isFromPlayerA() {
-		if(this.isFromPlayerA) return true; 
-		return false;
+		return this.isFromPlayerA;
 	}
 
 	/**
@@ -114,10 +112,10 @@ public abstract class Piece {
 	 * destiny doesn't violate the one hive rule. It can move several steps.
 	 */
 	protected boolean moveWithOnehiveRuleChecked(int x, int y) {
-//		if(moveTo(x,y) == true) { //caso o movimento seja de acordo com as regras
-//			setXY(x,y);
-//			return true;
-//		}
+		if(moveTo(x,y) == true) { //caso o movimento seja de acordo com as regras
+			setXY(x,y);
+			return true;
+		}
 		return false; //caso não seja
 	}
 
