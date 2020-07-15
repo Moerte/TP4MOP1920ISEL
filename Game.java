@@ -437,7 +437,7 @@ public class Game extends JFrame {
 			currentPlayerData.setPlayerPanelActive(true);
 			playerBData.setPlayerPanelActive(false);
 			isPlayerAToPlay = true;
-			mainLabel.setText("HIVE GAME: Current Player -> Player A");
+			mainLabel.setText("HIVE GAME: Current Player -> Player "+ (isPlayerAToPlay? "A": "B"));
 		}
 		board.resetBoard();
 		board.repaint();
@@ -560,7 +560,7 @@ public class Game extends JFrame {
 			} else {
 				Piece p = board.getPiece(x, y);
 				if (p != null) {
-					lb_message.setText("All pieces has to be played on the Board");
+					lb_message.setText("All pieces must be played on the Board");
 					return;
 					// TODO LOG: Todas as peças tem de ser jogadas em campo (não pode ser por cima
 					// de outra peça)
@@ -583,7 +583,7 @@ public class Game extends JFrame {
 				if (validNeib) {
 					// TODO Podes jogar
 				} else {
-					lb_message.setText("The Piece has to be played adjacent to another piece");
+					lb_message.setText("The Piece has must be played adjacent to another piece");
 					return;
 				}
 			} else if (!this.onlyHaveFriendlyNeighbors(x, y)) {
@@ -592,7 +592,7 @@ public class Game extends JFrame {
 			} else {
 				Piece p = board.getPiece(x, y);
 				if (p != null) {
-					lb_message.setText("All pieces has to be played on the Board");
+					lb_message.setText("All pieces must be played on the Board");
 					return;
 					// TODO LOG: Todas as peças tem de ser jogadas em campo (não pode ser por cima
 					// de outra peça)
@@ -648,7 +648,11 @@ public class Game extends JFrame {
 	 * can move to border - auxiliary method
 	 */
 	private boolean canMoveToBorder(int x, int y, ArrayList<BoardPlace> path) {
-		// TODO
+		if(board.getBoardPlace(x +1, y) != null || board.getBoardPlace(x, y+1) != null) {
+			
+			return true;
+		}
+			
 		return false;
 	}
 
@@ -661,17 +665,17 @@ public class Game extends JFrame {
 	public boolean canPhysicallyMoveTo(int x, int y, Direction d) {
 		switch (d) {
 		case N:
-			return this.physicalMove(x, y, Direction.NE, Direction.NO);
+			if(canMoveToBorder(x, y-1)) return this.physicalMove(x, y, Direction.NE, Direction.NO);
 		case NE:
-			return this.physicalMove(x, y, Direction.N, Direction.SE);
+			if(canMoveToBorder(x+1, y)) return this.physicalMove(x, y, Direction.N, Direction.SE);
 		case NO:
-			return this.physicalMove(x, y, Direction.N, Direction.SO);
+			if(canMoveToBorder(x-1, y)) return this.physicalMove(x, y, Direction.N, Direction.SO);
 		case S:
-			return this.physicalMove(x, y, Direction.SE, Direction.SO);
+			if(canMoveToBorder(x, y+1)) return this.physicalMove(x, y, Direction.SE, Direction.SO);
 		case SE:
-			return this.physicalMove(x, y, Direction.NE, Direction.S);
+			if(canMoveToBorder(x+1, y+1)) return this.physicalMove(x, y, Direction.NE, Direction.S);
 		case SO:
-			return this.physicalMove(x, y, Direction.S, Direction.NO);
+			if(canMoveToBorder(x-1, y+1)) return this.physicalMove(x, y, Direction.S, Direction.NO);
 		default:
 			break;
 		}
@@ -809,13 +813,16 @@ public class Game extends JFrame {
 	 * move hive UP, if it can be moved
 	 */
 	private void moveHiveUp() {
-		// TODO List<Piece> piceTomove = board.getPiecesFrom
+		lb_message.setText("Move Hive Up");
+		BoardPlace legit = board.getBoardPlace(0, 0);
+		legit.migrateTo(Direction.N);
 	}
 
 	/**
 	 * move hive DOWN, if it can
 	 */
 	private void moveDown() {
+		lb_message.setText("Move Down");
 		BoardPlace legit = board.getBoardPlace(0, 0);
 		legit.migrateTo(Direction.S);
 	}
@@ -824,6 +831,7 @@ public class Game extends JFrame {
 	 * move hive NO, if it can
 	 */
 	private void moveNO() {
+		lb_message.setText("Move NO");
 		BoardPlace legit = board.getBoardPlace(Board.DIMX - 1, Board.DIMY - 1);
 		legit.migrateTo(Direction.NO);
 	}
@@ -832,6 +840,7 @@ public class Game extends JFrame {
 	 * move hive NE, if it can
 	 */
 	private void moveNE() {
+		lb_message.setText("Move NE");
 		BoardPlace legit = board.getBoardPlace(0, Board.DIMY - 1);
 		legit.migrateTo(Direction.NE);
 	}
@@ -840,6 +849,7 @@ public class Game extends JFrame {
 	 * move hive SO, if it can
 	 */
 	private void moveSO() {
+		lb_message.setText("Move SO");
 		BoardPlace legit = board.getBoardPlace(Board.DIMX - 1, 0);
 		legit.migrateTo(Direction.SO);
 	}
@@ -848,6 +858,7 @@ public class Game extends JFrame {
 	 * move hive SE, if it can
 	 */
 	private void moveSE() {
+		lb_message.setText("Move SE");
 		BoardPlace legit = board.getBoardPlace(0, 0);
 		legit.migrateTo(Direction.SE);
 	}

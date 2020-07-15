@@ -28,6 +28,9 @@ public class Grasshopper extends Piece {
 	 */
 	public boolean moveTo(int x, int y) {
 		// TODO
-		return false;
+		int pieceX = getX();
+		int pieceY = getY();
+		if((pieceX + 1) == x || (pieceY +1) == y) game.moveUnconditional(this, x, y);
+		return true;
 	}
 }

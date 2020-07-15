@@ -59,6 +59,7 @@ public class Spider extends Piece {
 		if (moved) {
 			System.out.println("Piece " + this + " with (x,y) of (" + getX() + ", " + getY() + ") moved to (" + x + ", "
 					+ y + ")");
+			game.moveUnconditional(this, x, y);
 		}
 		return moved;
 	}
@@ -75,7 +76,7 @@ public class Spider extends Piece {
 			return false;
 
 		// TODO
-		return false;
+		return true;
 	}
 
 }

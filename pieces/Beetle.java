@@ -24,6 +24,7 @@ public class Beetle extends Piece {
 	 * piece(s). Should not violate the one hive rule.
 	 */
 	public boolean moveTo(int x, int y) {
+		// TODO
 		int pieceX = getX();
 		int pieceY = getY();
 		if((pieceX + 1) == x || (pieceY +1) == y) game.moveUnconditional(this, x, y);

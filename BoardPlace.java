@@ -154,7 +154,32 @@ public class BoardPlace {
 	public void migrateTo(Direction d) {
 		// TODO
 		switch(d) {
-		case NO : 
+		case N :
+			for (Piece piece : pieces) {
+				piece.moveTo(baseX, baseY+1);
+			}
+		case NE :
+			for (Piece piece : pieces) {
+				piece.moveTo(baseX, baseY+1);
+			}
+		case NO :
+			for (Piece piece : pieces) {
+				piece.moveTo(baseX, baseY+1);
+			}
+		case S :
+			for (Piece piece : pieces) {
+				piece.moveTo(baseX, baseY+1);
+			}
+		case SE :
+			for (Piece piece : pieces) {
+				piece.moveTo(baseX, baseY+1);
+			}
+		case SO :
+			for (Piece piece : pieces) {
+				piece.moveTo(baseX, baseY+1);
+			}
+		default:
+			break;
 		}
 	}
 
