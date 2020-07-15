@@ -6,12 +6,15 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -23,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
+import javax.swing.border.Border;
 
 import tps.layouts.CenterLayout;
 import tps.tp4.pieces.Piece;
@@ -63,6 +67,8 @@ public class Game extends JFrame {
 	private Font fontPieces;
 
 	// buttons to move the Hive, if possible
+	private JButton bn_newGame; // Adicionado por Nuno
+	private JButton bn_startAgain; // Adicionado por Nuno
 	private JButton bn_moveUp;
 	private JButton bn_moveDown;
 	private JButton bn_moveNO;
@@ -129,18 +135,22 @@ public class Game extends JFrame {
 		board = new Board(this, fontPieces);
 		add(board, BorderLayout.CENTER);
 
-		controlPanel = new JPanel();
-		controlPanel.setSize(700, 50);
-
+		controlPanel = new JPanel(new GridLayout(2, 9, 0, 0));
+		
 		Game that = this;
 		ActionListener al = new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				switch (e.getActionCommand()) {
+				case "new_game":
+					enableControlButtons(true);
+					startAgain();
+					break;
 				case "start_again":
 					int n = JOptionPane.showConfirmDialog(that, "Are you sure about your decision?",
 							"Restart Game Confirmation", JOptionPane.YES_NO_OPTION);
 					if (n == JOptionPane.YES_OPTION) {
+						enableControlButtons(true);
 						startAgain();
 					} else {
 						return;
@@ -173,59 +183,69 @@ public class Game extends JFrame {
 				}
 			}
 		};
-
-		bn_moveUp = new JButton("Start Again");
-		bn_moveUp.setActionCommand("start_again");
-		bn_moveUp.addActionListener(al);
-		controlPanel.add(bn_moveUp);
+		JPanel buttons = new JPanel();
+		
+		bn_newGame = new JButton("New Game");
+		bn_newGame.setActionCommand("new_game");
+		bn_newGame.addActionListener(al);
+		bn_newGame.setVisible(false);
+		bn_newGame.setEnabled(false);
+		buttons.add(bn_newGame);
+		
+		bn_startAgain = new JButton("Start Again");
+		bn_startAgain.setActionCommand("start_again");
+		bn_startAgain.addActionListener(al);
+		buttons.add(bn_startAgain);
 
 		bn_moveUp = new JButton("Move UP");
 		bn_moveUp.setActionCommand("move_up");
 		bn_moveUp.addActionListener(al);
-		controlPanel.add(bn_moveUp);
+		buttons.add(bn_moveUp);
 
 		bn_moveDown = new JButton("Move Down");
 		bn_moveDown.setActionCommand("move_down");
 		bn_moveDown.addActionListener(al);
-		controlPanel.add(bn_moveDown);
+		buttons.add(bn_moveDown);
 
 		bn_moveNO = new JButton("Move NO");
 		bn_moveNO.setActionCommand("move_no");
 		bn_moveNO.addActionListener(al);
-		controlPanel.add(bn_moveNO);
+		buttons.add(bn_moveNO);
 
 		bn_moveNE = new JButton("Move NE");
 		bn_moveNE.setActionCommand("move_ne");
 		bn_moveNE.addActionListener(al);
-		controlPanel.add(bn_moveNE);
+		buttons.add(bn_moveNE);
 
 		bn_moveSE = new JButton("Move SE");
 		bn_moveSE.setActionCommand("move_se");
 		bn_moveSE.addActionListener(al);
-		controlPanel.add(bn_moveSE);
+		buttons.add(bn_moveSE);
 
 		bn_moveSO = new JButton("Move SO");
 		bn_moveSO.setActionCommand("move_so");
 		bn_moveSO.addActionListener(al);
-		controlPanel.add(bn_moveSO);
+		buttons.add(bn_moveSO);
 
 		bn_changePlayer = new JButton("Change Player");
 		bn_changePlayer.setActionCommand("change_player");
 		bn_changePlayer.addActionListener(al);
-		controlPanel.add(bn_changePlayer);
+		buttons.add(bn_changePlayer);
 
 		bn_giveUp = new JButton("Give Up");
 		bn_giveUp.setActionCommand("give_up");
 		bn_giveUp.addActionListener(al);
-		controlPanel.add(bn_giveUp);
+		buttons.add(bn_giveUp);
 
-		// TODO colocar isto por baixo dos botoes...
+		// TODO tirar a margem entre os botões e a label
 		controlPanelOut = new JPanel();
-		lb_message = new JLabel("Cenas");
-		lb_message.setPreferredSize(new Dimension(150, 20));
+		lb_message = new JLabel("Log do Jogo");
+		lb_message.setPreferredSize(new Dimension(500, 20));
+		lb_message.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		controlPanelOut.add(lb_message);
-		add(controlPanelOut, BorderLayout.SOUTH);
 
+		controlPanel.add(buttons, BorderLayout.CENTER);
+		controlPanel.add(controlPanelOut, BorderLayout.SOUTH);
 		add(controlPanel, BorderLayout.SOUTH);
 
 		playerAData = new PlayerData(this, true);
@@ -421,9 +441,12 @@ public class Game extends JFrame {
 		}
 		board.resetBoard();
 		board.repaint();
-		if(currentPiece != null) board.getBoardPlace(currentPiece.getX(), currentPiece.getY()).setSelected(false);
+		if (currentPiece != null)
+			board.getBoardPlace(currentPiece.getX(), currentPiece.getY()).setSelected(false);
 		currentHiveLabel = null;
 		currentPiece = null;
+		bn_newGame.setVisible(false);
+		bn_newGame.setEnabled(false);
 	}
 
 	/**
@@ -450,16 +473,16 @@ public class Game extends JFrame {
 				JOptionPane.YES_NO_OPTION);
 		if (n == JOptionPane.YES_OPTION) {
 			this.endOfGame = true;
-			
+
 			if (this.checkFinishGame()) {
-				board.getBoardPlace(currentPiece.getX(), currentPiece.getY()).setSelected(false);
-				currentHiveLabel = null;
-				currentPiece = null;
+				if (currentPiece != null && currentHiveLabel != null) {
+					board.getBoardPlace(currentPiece.getX(), currentPiece.getY()).setSelected(false);
+					currentHiveLabel = null;
+					currentPiece = null;
+				}
 				this.doFinishGameActions();
 			}
-			
-			
-			
+
 		} else if (n == JOptionPane.NO_OPTION) {
 			return;
 		}
@@ -477,23 +500,23 @@ public class Game extends JFrame {
 			int k = (int) p.getX();
 			int j = (int) p.getY();
 			Piece piece = board.getPiece(k, j);
-			if(piece == null) continue;
+			if (piece == null)
+				continue;
 			if (board.getPiece(k, j).isFromPlayerA() && currentPlayerData.equals(playerAData)) {
 				enemyNeib = true;
-			}else if(!board.getPiece(k, j).isFromPlayerA() && currentPlayerData.equals(playerBData)) {
+			} else if (!board.getPiece(k, j).isFromPlayerA() && currentPlayerData.equals(playerBData)) {
 				enemyNeib = true;
-			}else if(board.getPiece(k, j).isFromPlayerA() && currentPlayerData.equals(playerBData)) {
+			} else if (board.getPiece(k, j).isFromPlayerA() && currentPlayerData.equals(playerBData)) {
 				enemyNeib = false;
 				break;
-			}else if(!board.getPiece(k, j).isFromPlayerA() && currentPlayerData.equals(playerAData)) {
+			} else if (!board.getPiece(k, j).isFromPlayerA() && currentPlayerData.equals(playerAData)) {
 				enemyNeib = false;
 				break;
 			}
 		}
-		System.out.println("CEnas =>" +enemyNeib);
+		System.out.println("CEnas =>" + enemyNeib);
 		return enemyNeib;
 	}
-	
 
 	/**
 	 * a click on the board
@@ -509,29 +532,35 @@ public class Game extends JFrame {
 			Piece p = board.getPiece(x, y);
 			if (p == null)
 				return;
-			if(currentPiece != null) {
+			if (currentPiece != null) {
+				// TODO
 				System.out.println("Cheguei");
-				//currentPiece.moveTo(x, y);
+				if(currentPiece.moveTo(x, y)) {
+					board.getBoardPlace(currentPiece.getX(), currentPiece.getY()).setSelected(false);
+					board.repaint();
+					changePlayer();
+				}
 				return;
-			}
-			else {
-				currentPiece = p; 
+			} else {
+				currentPiece = p;
 				board.getBoardPlace(x, y).setSelected(true);
 				return;
 			}
 		}
 		if (currentPiece != null) {
 			System.out.println("Cheguei 222");
-			return;
-			//currentPiece.moveTo(x, y);
+			currentPiece.moveTo(x, y);
+			//return;
+			// currentPiece.moveTo(x, y);
 		}
 		if (isPlayerAToPlay) {
 			if (currentPlayerData.getNumberOfMoves() != 0 && !this.onlyHaveFriendlyNeighbors(x, y)) {
+				lb_message.setText("Invalid position! Can't play here!");
 				return;
-				// TODO Posiçao invalida, LOG : Não pode jogar
 			} else {
 				Piece p = board.getPiece(x, y);
 				if (p != null) {
+					lb_message.setText("All pieces has to be played on the Board");
 					return;
 					// TODO LOG: Todas as peças tem de ser jogadas em campo (não pode ser por cima
 					// de outra peça)
@@ -554,15 +583,16 @@ public class Game extends JFrame {
 				if (validNeib) {
 					// TODO Podes jogar
 				} else {
+					lb_message.setText("The Piece has to be played adjacent to another piece");
 					return;
-					// TODO LOG: Tens de jogar adjacente a outra peça
 				}
-			}else if(!this.onlyHaveFriendlyNeighbors(x, y)) {
+			} else if (!this.onlyHaveFriendlyNeighbors(x, y)) {
+				lb_message.setText("Invalid position! Can't play here!");
 				return;
-				// TODO Posiçao invalida, LOG : Não pode jogar
-			}else {
+			} else {
 				Piece p = board.getPiece(x, y);
 				if (p != null) {
+					lb_message.setText("All pieces has to be played on the Board");
 					return;
 					// TODO LOG: Todas as peças tem de ser jogadas em campo (não pode ser por cima
 					// de outra peça)
@@ -571,7 +601,7 @@ public class Game extends JFrame {
 				}
 			}
 		}
-		//currentPiece = currentHiveLabel.getPiece();
+		// currentPiece = currentHiveLabel.getPiece();
 		board.addPiece(currentHiveLabel.getPiece(), x, y);
 		board.repaint();
 		currentHiveLabel.deactivate();
@@ -589,7 +619,8 @@ public class Game extends JFrame {
 			return;
 		if (currentHiveLabel != null) {
 			currentHiveLabel.setToNormal();
-			if(placingQueenBee) placingQueenBee = false;
+			if (placingQueenBee)
+				placingQueenBee = false;
 			if (currentHiveLabel.equals(hl)) {
 				currentHiveLabel = null;
 				return;
@@ -729,7 +760,10 @@ public class Game extends JFrame {
 		boolean checkWinner = playerAData.playerWon();
 		JOptionPane.showMessageDialog(this, "Congratulations Player " + (checkWinner ? "A" : "B"), "Winner Panel",
 				JOptionPane.INFORMATION_MESSAGE);
+		lb_message.setText("Winner: Player "+ (checkWinner ? "A" : "B"));
 		enableControlButtons(false);
+		bn_newGame.setVisible(true);
+		bn_newGame.setEnabled(true);
 	}
 
 	/**
@@ -741,7 +775,14 @@ public class Game extends JFrame {
 		Component[] playerBContainer = playerBData.getSidePanel().getComponents();
 
 		for (Component c : container) {
-			c.setEnabled(enable);
+			if (c instanceof JPanel) {
+				JPanel jp = (JPanel) c;
+				Component[] buttons = jp.getComponents();
+				for (Component x : buttons) {
+					if(x instanceof JLabel) continue;
+					x.setEnabled(enable);
+				}
+			}
 		}
 		this.deactivateLabels(playerBContainer, enable);
 		this.deactivateLabels(playerAContainer, enable);

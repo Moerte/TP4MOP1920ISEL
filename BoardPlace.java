@@ -122,7 +122,6 @@ public class BoardPlace {
 	 * set selected state
 	 */
 	public void setSelected(boolean selected) {
-		// TODO
 		this.selected = selected;
 		board.repaint();
 	}
@@ -170,7 +169,6 @@ public class BoardPlace {
 			g.setColor(PIECEBACKGROUNDCOLOR);
 			g.fillPolygon(polygon);
 		} else {
-			// TODO
 			g.setColor(getPiece().getColor());
 			g.fillPolygon(polygon);
 			if(getPiece().isFromPlayerA()) g.setColor(Color.BLACK);
@@ -185,7 +183,6 @@ public class BoardPlace {
 			g.setColor(PIECESELECTIONCOLOR);
 			//g.fillPolygon(selPolygon);
 			g.drawPolygon(polygon);
-			// TODO
 		}
 	}
 
