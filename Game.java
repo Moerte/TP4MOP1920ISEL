@@ -61,6 +61,7 @@ public class Game extends JFrame {
 	private JPanel controlPanelOut;
 	private JLabel lb_message;
 	private JPanel controlPanel;
+	
 	private Board board;
 
 	private Font fontCurrentPlayer;
