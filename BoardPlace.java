@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Polygon;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
 
 import tps.tp4.Game.Direction;
 import tps.tp4.pieces.Piece;
@@ -152,34 +154,77 @@ public class BoardPlace {
 	 * received direction. To be used is move HIVE up, down, NO, ....
 	 */
 	public void migrateTo(Direction d) {
-		// TODO
+		if(pieces.size() ==  0)
+			return;
 		switch(d) {
-		case N :
-			for (Piece piece : pieces) {
-				piece.moveTo(baseX, baseY+1);
+			case N:
+				BoardPlace bpn = board.getBoardPlace(x, y-1);
+				bpn.setSelected(this.isSelected());
+				this.swapPieces(bpn);
+				break;
+			case NO:
+				BoardPlace bpno;
+				if(x % 2 == 0)
+					bpno = board.getBoardPlace(x-1, y-1);
+				else
+					bpno = board.getBoardPlace(x-1, y);
+				bpno.setSelected(this.isSelected());
+				this.swapPieces(bpno);
+				break;
+			case NE:
+				BoardPlace bpne;
+				if(x % 2 == 0)
+					bpne = board.getBoardPlace(x + 1, y - 1);
+				else
+					bpne = board.getBoardPlace(x + 1, y);
+				bpne.setSelected(this.isSelected());
+				this.swapPieces(bpne);
+				break;
+			case S:
+				BoardPlace bps = board.getBoardPlace(x, y + 1);
+				bps.setSelected(this.isSelected());
+				this.swapPieces(bps);
+				break;
+			case SO:
+				BoardPlace bpso;
+				if(x % 2 == 0)
+					bpso = board.getBoardPlace(x-1, y);
+				else
+					bpso = board.getBoardPlace(x-1, y + 1);
+				bpso.setSelected(this.isSelected());
+				this.swapPieces(bpso);
+				break;
+			case SE:
+				BoardPlace bpse;
+				if(x % 2 == 0)
+					bpse = board.getBoardPlace(x+1, y);
+				else
+					bpse = board.getBoardPlace(x+1, y+1);
+				bpse.setSelected(this.isSelected());
+				this.swapPieces(bpse);
+				break;
+			default:
+				break;
+		}
+		board.repaint();
+			
+	}
+	
+	private void swapPieces(BoardPlace bp) {
+		if(pieces.size() == 1) {
+			Piece p = this.getPiece();
+			this.remPiece(p);
+			bp.addPiece(p);
+		} else {
+			Deque<Piece> stack = new LinkedList<Piece>();
+			while(pieces.size() > 0) {
+				Piece p = this.getPiece();
+				this.remPiece(p);
+				stack.add(p);
 			}
-		case NE :
-			for (Piece piece : pieces) {
-				piece.moveTo(baseX, baseY+1);
+			while(!stack.isEmpty()) {
+				bp.addPiece(stack.pollLast());
 			}
-		case NO :
-			for (Piece piece : pieces) {
-				piece.moveTo(baseX, baseY+1);
-			}
-		case S :
-			for (Piece piece : pieces) {
-				piece.moveTo(baseX, baseY+1);
-			}
-		case SE :
-			for (Piece piece : pieces) {
-				piece.moveTo(baseX, baseY+1);
-			}
-		case SO :
-			for (Piece piece : pieces) {
-				piece.moveTo(baseX, baseY+1);
-			}
-		default:
-			break;
 		}
 	}
 

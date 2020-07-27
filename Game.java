@@ -68,6 +68,7 @@ public class Game extends JFrame {
 	private Font fontPieces;
 
 	// buttons to move the Hive, if possible
+	
 	private JButton bn_newGame; // Adicionado por Nuno
 	private JButton bn_startAgain; // Adicionado por Nuno
 	private JButton bn_moveUp;
@@ -814,54 +815,96 @@ public class Game extends JFrame {
 	 * move hive UP, if it can be moved
 	 */
 	private void moveHiveUp() {
-		lb_message.setText("Move Hive Up");
-		BoardPlace legit = board.getBoardPlace(0, 0);
-		legit.migrateTo(Direction.N);
+		for(int i = 0; i < Board.DIMY; i++) {
+			for(int j = 0; j < Board.DIMX; j++) {
+				BoardPlace bp = board.getBoardPlace(j, i);
+				if(i == 0 && bp.getPiece() != null) {
+					lb_message.setText("Can't move up! Upper limit of map reached");
+					return;
+				}
+				board.getBoardPlace(j, i).migrateTo(Direction.N);
+			}
+		}
 	}
 
 	/**
 	 * move hive DOWN, if it can
 	 */
 	private void moveDown() {
-		lb_message.setText("Move Down");
-		BoardPlace legit = board.getBoardPlace(0, 0);
-		legit.migrateTo(Direction.S);
+		for(int i = (Board.DIMY - 1); i >= 0; i--) {
+			for(int j = 0; j < Board.DIMX; j++) {
+				BoardPlace bp = board.getBoardPlace(j, i);
+				if(i == Board.DIMY-1 && bp.getPiece() != null) {
+					lb_message.setText("Can't move down! Lower limit of map reached");
+					return;
+				}
+				board.getBoardPlace(j, i).migrateTo(Direction.S);
+			}
+		}
 	}
 
 	/**
 	 * move hive NO, if it can
 	 */
 	private void moveNO() {
-		lb_message.setText("Move NO");
-		BoardPlace legit = board.getBoardPlace(Board.DIMX - 1, Board.DIMY - 1);
-		legit.migrateTo(Direction.NO);
+		for(int i = 0; i < Board.DIMY; i++) {
+			for(int j = 0; j < Board.DIMX; j++) {
+				BoardPlace bp = board.getBoardPlace(j, i);
+				if(((i == 0 && j%2==0) || j == 0) && bp.getPiece() != null) {
+					lb_message.setText("Can't move NO! Northwestern limit of map reached");
+					return;
+				}
+				board.getBoardPlace(j, i).migrateTo(Direction.NO);
+			}
+		}
 	}
 
 	/**
 	 * move hive NE, if it can
 	 */
 	private void moveNE() {
-		lb_message.setText("Move NE");
-		BoardPlace legit = board.getBoardPlace(0, Board.DIMY - 1);
-		legit.migrateTo(Direction.NE);
+		for(int i = 0; i < Board.DIMY; i++) {
+			for(int j = (Board.DIMX-1); j >= 0; j--) {
+				BoardPlace bp = board.getBoardPlace(j, i);
+				if(((i == 0 && j%2==0) || j == (Board.DIMX-1)) && bp.getPiece() != null) {
+					lb_message.setText("Can't move NE! Northeastern limit of map reached");
+					return;
+				}
+				board.getBoardPlace(j, i).migrateTo(Direction.NE);
+			}
+		}
 	}
 
 	/**
 	 * move hive SO, if it can
 	 */
 	private void moveSO() {
-		lb_message.setText("Move SO");
-		BoardPlace legit = board.getBoardPlace(Board.DIMX - 1, 0);
-		legit.migrateTo(Direction.SO);
+		for(int i = (Board.DIMY - 1); i >= 0; i--) {
+			for(int j = 0; j < Board.DIMX; j++) {
+				BoardPlace bp = board.getBoardPlace(j, i);
+				if(((i == Board.DIMY-1 && j%2==1) || j == 0) && bp.getPiece() != null) {
+					lb_message.setText("Can't move SO! Southwestern limit of map reached");
+					return;
+				}
+				board.getBoardPlace(j, i).migrateTo(Direction.SO);
+			}
+		}
 	}
 
 	/**
 	 * move hive SE, if it can
 	 */
 	private void moveSE() {
-		lb_message.setText("Move SE");
-		BoardPlace legit = board.getBoardPlace(0, 0);
-		legit.migrateTo(Direction.SE);
+		for(int i = (Board.DIMY - 1); i >= 0; i--) {
+			for(int j = (Board.DIMX-1); j >= 0; j--) {
+				BoardPlace bp = board.getBoardPlace(j, i);
+				if(((i == Board.DIMY-1 && j%2==1) || j == Board.DIMX-1) && bp.getPiece() != null) {
+					lb_message.setText("Can't move SE! Southeastern limit of map reached");
+					return;
+				}
+				board.getBoardPlace(j, i).migrateTo(Direction.SE);
+			}
+		}
 	}
 
 }
