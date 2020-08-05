@@ -38,6 +38,7 @@ public class PlayerData {
 	private final PiecesAndItsNumber[] ListaDePecas = new PiecesAndItsNumber[] {
 			new PiecesAndItsNumber(PType.QUEENBEE, 1), new PiecesAndItsNumber(PType.BEETLE, 2),
 			new PiecesAndItsNumber(PType.GRASHOPPER, 2), new PiecesAndItsNumber(PType.SPIDER, 3),
+			new PiecesAndItsNumber(PType.ANT, 3),
 			new PiecesAndItsNumber(PType.MOSQUITO, 1), new PiecesAndItsNumber(PType.LADYBUG, 1), new PiecesAndItsNumber(PType.PILLBUG, 1) };
 
 	private JPanel sidePanel;
@@ -78,7 +79,7 @@ public class PlayerData {
 	public PlayerData(Game game, boolean isPlayerA) {
 		this.init(isPlayerA);
 		
-		JPanel piecesPanel = new JPanel(new GridLayout(11, 1, 0, 0));
+		JPanel piecesPanel = new JPanel(new GridLayout(14, 1, 0, 0));
 		for (PiecesAndItsNumber p : ListaDePecas) {
 			Piece addedPiece = p.getTipo().createNew(game, isPlayerA);
 			for (int i = 0; i < p.getnPecas(); i++) {
@@ -139,8 +140,6 @@ public class PlayerData {
 		playerColor.setOpaque(true);
 		sidePanel.add(playerColor);
 	
-		
-		
 	}
 
 	/**
