@@ -1,11 +1,10 @@
 package tps.tp4.pieces;
 
-import java.awt.Color;
-import java.awt.Point;
-
 import tps.tp4.Board;
 import tps.tp4.Game;
 import tps.tp4.Game.Direction;
+
+import java.awt.*;
 
 public abstract class Piece {
 

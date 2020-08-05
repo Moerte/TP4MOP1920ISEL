@@ -5,17 +5,19 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -23,14 +25,19 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
-import javax.swing.border.Border;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
 
 import tps.layouts.CenterLayout;
 import tps.tp4.pieces.Piece;
-import tps.tp4.pieces.Spider;
 
 /**
  * HIVE GAME: one Queen, two Beetles, two Grasshoppers, three Spiders and three
@@ -61,14 +68,14 @@ public class Game extends JFrame {
 	private JPanel controlPanelOut;
 	private JLabel lb_message;
 	private JPanel controlPanel;
-	
+
 	private Board board;
 
 	private Font fontCurrentPlayer;
 	private Font fontPieces;
 
 	// buttons to move the Hive, if possible
-	
+
 	private JButton bn_newGame; // Adicionado por Nuno
 	private JButton bn_startAgain; // Adicionado por Nuno
 	private JButton bn_moveUp;
@@ -89,6 +96,11 @@ public class Game extends JFrame {
 
 	private PlayerData playerAData;
 	private PlayerData playerBData;
+
+	private JTree tree;
+	private JEditorPane htmlPane;
+	private JSplitPane splitPane;
+	private URL referenceURL;
 
 	/**
 	 * methods =============================================
@@ -138,7 +150,7 @@ public class Game extends JFrame {
 		add(board, BorderLayout.CENTER);
 
 		controlPanel = new JPanel(new GridLayout(2, 9, 0, 0));
-		
+
 		Game that = this;
 		ActionListener al = new ActionListener() {
 
@@ -186,14 +198,14 @@ public class Game extends JFrame {
 			}
 		};
 		JPanel buttons = new JPanel();
-		
+
 		bn_newGame = new JButton("New Game");
 		bn_newGame.setActionCommand("new_game");
 		bn_newGame.addActionListener(al);
 		bn_newGame.setVisible(false);
 		bn_newGame.setEnabled(false);
 		buttons.add(bn_newGame);
-		
+
 		bn_startAgain = new JButton("Start Again");
 		bn_startAgain.setActionCommand("start_again");
 		bn_startAgain.addActionListener(al);
@@ -299,8 +311,8 @@ public class Game extends JFrame {
 				case "About":
 					about();
 					break;
-				case "Help":
-
+				case "Rules":
+					viewRules();
 					break;
 				}
 			}
@@ -315,8 +327,8 @@ public class Game extends JFrame {
 		menu.addSeparator();
 		menuBar.add(menu);
 
-		restartMenuItem = new JMenuItem("Restart Game", KeyEvent.VK_R);
-		restartMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+		restartMenuItem = new JMenuItem("Restart Game", KeyEvent.VK_S);
+		restartMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 		restartMenuItem.addActionListener(al);
 		menu.add(restartMenuItem);
 
@@ -335,8 +347,8 @@ public class Game extends JFrame {
 		aboutItem.addActionListener(al);
 		menu.add(aboutItem);
 
-		JMenuItem helpItem = new JMenuItem("Help", KeyEvent.VK_H);
-		helpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.CTRL_MASK));
+		JMenuItem helpItem = new JMenuItem("Rules", KeyEvent.VK_R);
+		helpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
 		helpItem.addActionListener(al);
 		menu.add(helpItem);
 
@@ -348,17 +360,203 @@ public class Game extends JFrame {
 	 * activate About window
 	 */
 	private void about() {
+		ImageIcon icon = new ImageIcon(this.getClass().getResource("pictures/Coisas.jpeg"));
 		JOptionPane.showMessageDialog(this, "Hive Game - V 1.0\nProduced by:\nNuno Oliveira and Eduardo Marques.",
-				"About information.", JOptionPane.INFORMATION_MESSAGE);
+				"About information.", JOptionPane.INFORMATION_MESSAGE, icon);
 	}
 
 	/**
 	 * activate View scores window
 	 */
 	private void viewScores() {
-		// TODO Adicionar as pontuações
+		// TODO Adicionar as pontuações (LER DOCOMENTO)
 		JOptionPane.showMessageDialog(this, "Top Scores:\n", "Top Scores", JOptionPane.INFORMATION_MESSAGE);
 	}
+
+	/**
+	 * 
+	 */
+	// EM TESTES => COMEÇO
+	private void viewRules() {
+
+		// Create the nodes.
+		DefaultMutableTreeNode top = new DefaultMutableTreeNode("The Hive Game");
+		createNodes(top);
+
+		// Create a tree that allows one selection at a time.
+		tree = new JTree(top);
+		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+
+		TreeSelectionListener tsl = new TreeSelectionListener() {
+			@Override
+			public void valueChanged(TreeSelectionEvent e) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+
+				if (node == null)
+					return;
+
+				Object nodeInfo = node.getUserObject();
+				if (node.isLeaf() && (nodeInfo instanceof BookInfo)) {
+					BookInfo book = (BookInfo) nodeInfo;
+					displayURL(book.bookURL);
+
+				} else {
+					displayURL(referenceURL);
+				}
+
+			}
+		};
+		// Listen for when the selection changes.
+		tree.addTreeSelectionListener(tsl);
+
+		// Create the scroll pane and add the tree to it.
+		JScrollPane treeView = new JScrollPane(tree);
+
+		// Create the HTML viewing pane.
+		htmlPane = new JEditorPane();
+		htmlPane.setEditable(false);
+		initReference();
+		JScrollPane htmlView = new JScrollPane(htmlPane);
+
+		// Add the scroll panes to a split pane.
+		splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		splitPane.setTopComponent(treeView);
+		splitPane.setBottomComponent(htmlView);
+
+		Dimension minimumSize = new Dimension(100, 50);
+		htmlView.setMinimumSize(minimumSize);
+		treeView.setMinimumSize(minimumSize);
+		splitPane.setDividerLocation(100);
+
+		splitPane.setPreferredSize(new Dimension(500, 300));
+		JOptionPane.showMessageDialog(this, splitPane, "Rules", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	private void createNodes(DefaultMutableTreeNode top) {
+		DefaultMutableTreeNode category = null;
+		DefaultMutableTreeNode book = null;
+
+		category = new DefaultMutableTreeNode("General");
+		top.add(category);
+
+		// Components
+		book = new DefaultMutableTreeNode(new BookInfo("Components", "component.html"));
+		category.add(book);
+
+		// Setup of the game
+		book = new DefaultMutableTreeNode(new BookInfo("Setup", "setup.html"));
+		category.add(book);
+
+		// Objective of the game
+		book = new DefaultMutableTreeNode(new BookInfo("Objective of the Game", "objective.html"));
+		category.add(book);
+
+		// Game play
+		book = new DefaultMutableTreeNode(new BookInfo("Game Play", "gameplay.html"));
+		category.add(book);
+
+		// Placing
+		book = new DefaultMutableTreeNode(new BookInfo("Placing", "placing.html"));
+		category.add(book);
+
+		// Moving
+		book = new DefaultMutableTreeNode(new BookInfo("Moving", "moving.html"));
+		category.add(book);
+
+		// Pieces
+		category = new DefaultMutableTreeNode("Pieces");
+		top.add(category);
+
+		// Queen Bee
+		book = new DefaultMutableTreeNode(new BookInfo("Queen Bee", "/pieces/test.html"));
+		category.add(book);
+
+		// Beetle
+		book = new DefaultMutableTreeNode(new BookInfo("Beetle", "/pieces/test.html"));
+		category.add(book);
+		
+		// Grasshopper
+		book = new DefaultMutableTreeNode(new BookInfo("Grasshopper", "/pieces/test.html"));
+		category.add(book);
+
+		// Spider
+		book = new DefaultMutableTreeNode(new BookInfo("Spider", "/pieces/test.html"));
+		category.add(book);
+		
+		// Ant
+		book = new DefaultMutableTreeNode(new BookInfo("Ant", "/pieces/test.html"));
+		category.add(book);
+
+		// Ladybug
+		book = new DefaultMutableTreeNode(new BookInfo("Ladybug", "/pieces/test.html"));
+		category.add(book);
+		
+		// Mosquito
+		book = new DefaultMutableTreeNode(new BookInfo("Mosquito", "/pieces/test.html"));
+		category.add(book);
+
+		// Pillbug
+		book = new DefaultMutableTreeNode(new BookInfo("Pillbug", "/pieces/test.html"));
+		category.add(book);
+		
+
+		// Restrictions
+		category = new DefaultMutableTreeNode("Restrictions");
+		top.add(category);
+
+		// One Hive Move
+		book = new DefaultMutableTreeNode(new BookInfo("One Hive Move", "/restrictions/onehivemove.html"));
+		category.add(book);
+
+		// Freedom to Move
+		book = new DefaultMutableTreeNode(new BookInfo("Freedom to Move", "/restrictions/freedomtomove.html"));
+		category.add(book);
+		
+		// Unable to Move or to Place
+		book = new DefaultMutableTreeNode(new BookInfo("Unable to Move or to Place", "/restrictions/unabletomove.html"));
+		category.add(book);
+
+	}
+
+	private class BookInfo {
+		public String bookName;
+		public URL bookURL;
+
+		public BookInfo(String book, String filename) {
+			bookName = book;
+			System.out.println("Getting -> " + "rules/" + filename);
+			bookURL = this.getClass().getResource("rules/" + filename);
+			if (bookURL == null) {
+				System.err.println("Couldn't find file: " + filename);
+			}
+		}
+
+		public String toString() {
+			return bookName;
+		}
+	}
+
+	private void initReference() {
+		String s = "rules/" + "reference.html";
+		referenceURL = this.getClass().getResource(s);
+		if (referenceURL == null) {
+			System.err.println("Couldn't open help file: " + s);
+		}
+		displayURL(referenceURL);
+	}
+
+	private void displayURL(URL url) {
+		try {
+			if (url != null) {
+				htmlPane.setPage(url);
+			} else { // null url
+				htmlPane.setText("File Not Found");
+			}
+		} catch (IOException e) {
+			System.err.println("Attempted to read a bad URL: " + url);
+		}
+	}
+	// EM TESTES => FIM
 
 	/**
 	 * get color from player
@@ -439,7 +637,7 @@ public class Game extends JFrame {
 			currentPlayerData.setPlayerPanelActive(true);
 			playerBData.setPlayerPanelActive(false);
 			isPlayerAToPlay = true;
-			mainLabel.setText("HIVE GAME: Current Player -> Player "+ (isPlayerAToPlay? "A": "B"));
+			mainLabel.setText("HIVE GAME: Current Player -> Player " + (isPlayerAToPlay ? "A" : "B"));
 		}
 		board.resetBoard();
 		board.repaint();
@@ -537,7 +735,7 @@ public class Game extends JFrame {
 			if (currentPiece != null) {
 				// TODO
 				System.out.println("Cheguei");
-				if(currentPiece.moveTo(x, y)) {
+				if (currentPiece.moveTo(x, y)) {
 					board.getBoardPlace(currentPiece.getX(), currentPiece.getY()).setSelected(false);
 					board.repaint();
 					changePlayer();
@@ -552,7 +750,7 @@ public class Game extends JFrame {
 		if (currentPiece != null) {
 			System.out.println("Cheguei 222");
 			currentPiece.moveTo(x, y);
-			//return;
+			// return;
 			// currentPiece.moveTo(x, y);
 		}
 		if (isPlayerAToPlay) {
@@ -650,11 +848,11 @@ public class Game extends JFrame {
 	 * can move to border - auxiliary method
 	 */
 	private boolean canMoveToBorder(int x, int y, ArrayList<BoardPlace> path) {
-		if(board.getBoardPlace(x +1, y) != null || board.getBoardPlace(x, y+1) != null) {
-			
+		if (board.getBoardPlace(x + 1, y) != null || board.getBoardPlace(x, y + 1) != null) {
+
 			return true;
 		}
-			
+
 		return false;
 	}
 
@@ -667,17 +865,23 @@ public class Game extends JFrame {
 	public boolean canPhysicallyMoveTo(int x, int y, Direction d) {
 		switch (d) {
 		case N:
-			if(canMoveToBorder(x, y-1)) return this.physicalMove(x, y, Direction.NE, Direction.NO);
+			if (canMoveToBorder(x, y - 1))
+				return this.physicalMove(x, y, Direction.NE, Direction.NO);
 		case NE:
-			if(canMoveToBorder(x+1, y)) return this.physicalMove(x, y, Direction.N, Direction.SE);
+			if (canMoveToBorder(x + 1, y))
+				return this.physicalMove(x, y, Direction.N, Direction.SE);
 		case NO:
-			if(canMoveToBorder(x-1, y)) return this.physicalMove(x, y, Direction.N, Direction.SO);
+			if (canMoveToBorder(x - 1, y))
+				return this.physicalMove(x, y, Direction.N, Direction.SO);
 		case S:
-			if(canMoveToBorder(x, y+1)) return this.physicalMove(x, y, Direction.SE, Direction.SO);
+			if (canMoveToBorder(x, y + 1))
+				return this.physicalMove(x, y, Direction.SE, Direction.SO);
 		case SE:
-			if(canMoveToBorder(x+1, y+1)) return this.physicalMove(x, y, Direction.NE, Direction.S);
+			if (canMoveToBorder(x + 1, y + 1))
+				return this.physicalMove(x, y, Direction.NE, Direction.S);
 		case SO:
-			if(canMoveToBorder(x-1, y+1)) return this.physicalMove(x, y, Direction.S, Direction.NO);
+			if (canMoveToBorder(x - 1, y + 1))
+				return this.physicalMove(x, y, Direction.S, Direction.NO);
 		default:
 			break;
 		}
@@ -766,7 +970,7 @@ public class Game extends JFrame {
 		boolean checkWinner = playerAData.playerWon();
 		JOptionPane.showMessageDialog(this, "Congratulations Player " + (checkWinner ? "A" : "B"), "Winner Panel",
 				JOptionPane.INFORMATION_MESSAGE);
-		lb_message.setText("Winner: Player "+ (checkWinner ? "A" : "B"));
+		lb_message.setText("Winner: Player " + (checkWinner ? "A" : "B"));
 		enableControlButtons(false);
 		bn_newGame.setVisible(true);
 		bn_newGame.setEnabled(true);
@@ -785,7 +989,8 @@ public class Game extends JFrame {
 				JPanel jp = (JPanel) c;
 				Component[] buttons = jp.getComponents();
 				for (Component x : buttons) {
-					if(x instanceof JLabel) continue;
+					if (x instanceof JLabel)
+						continue;
 					x.setEnabled(enable);
 				}
 			}
@@ -815,10 +1020,10 @@ public class Game extends JFrame {
 	 * move hive UP, if it can be moved
 	 */
 	private void moveHiveUp() {
-		for(int i = 0; i < Board.DIMY; i++) {
-			for(int j = 0; j < Board.DIMX; j++) {
+		for (int i = 0; i < Board.DIMY; i++) {
+			for (int j = 0; j < Board.DIMX; j++) {
 				BoardPlace bp = board.getBoardPlace(j, i);
-				if(i == 0 && bp.getPiece() != null) {
+				if (i == 0 && bp.getPiece() != null) {
 					lb_message.setText("Can't move up! Upper limit of map reached");
 					return;
 				}
@@ -831,10 +1036,10 @@ public class Game extends JFrame {
 	 * move hive DOWN, if it can
 	 */
 	private void moveDown() {
-		for(int i = (Board.DIMY - 1); i >= 0; i--) {
-			for(int j = 0; j < Board.DIMX; j++) {
+		for (int i = (Board.DIMY - 1); i >= 0; i--) {
+			for (int j = 0; j < Board.DIMX; j++) {
 				BoardPlace bp = board.getBoardPlace(j, i);
-				if(i == Board.DIMY-1 && bp.getPiece() != null) {
+				if (i == Board.DIMY - 1 && bp.getPiece() != null) {
 					lb_message.setText("Can't move down! Lower limit of map reached");
 					return;
 				}
@@ -847,10 +1052,18 @@ public class Game extends JFrame {
 	 * move hive NO, if it can
 	 */
 	private void moveNO() {
-		for(int i = 0; i < Board.DIMY; i++) {
-			for(int j = 0; j < Board.DIMX; j++) {
+		boolean canMove = true;
+		for (int i = 0; i < Board.DIMX; i = i + 2) {
+			BoardPlace bp = board.getBoardPlace(i, 0);
+			if (bp.getPiece() != null) {
+				canMove = false;
+				break;
+			}
+		}
+		for (int i = 0; i < Board.DIMY; i++) {
+			for (int j = 0; j < Board.DIMX; j++) {
 				BoardPlace bp = board.getBoardPlace(j, i);
-				if(((i == 0 && j%2==0) || j == 0) && bp.getPiece() != null) {
+				if ((j == 0 && bp.getPiece() != null) || !canMove) {
 					lb_message.setText("Can't move NO! Northwestern limit of map reached");
 					return;
 				}
@@ -863,10 +1076,17 @@ public class Game extends JFrame {
 	 * move hive NE, if it can
 	 */
 	private void moveNE() {
-		for(int i = 0; i < Board.DIMY; i++) {
-			for(int j = (Board.DIMX-1); j >= 0; j--) {
+		boolean canMove = true;
+		for (int i = (Board.DIMX - 1); i >= 0; i = i - 2) {
+			BoardPlace bp = board.getBoardPlace(i, 0);
+			if (bp.getPiece() != null) {
+				canMove = false;
+			}
+		}
+		for (int i = 0; i < Board.DIMY; i++) {
+			for (int j = (Board.DIMX - 1); j >= 0; j--) {
 				BoardPlace bp = board.getBoardPlace(j, i);
-				if(((i == 0 && j%2==0) || j == (Board.DIMX-1)) && bp.getPiece() != null) {
+				if ((j == (Board.DIMX - 1) && bp.getPiece() != null) | !canMove) {
 					lb_message.setText("Can't move NE! Northeastern limit of map reached");
 					return;
 				}
@@ -879,10 +1099,17 @@ public class Game extends JFrame {
 	 * move hive SO, if it can
 	 */
 	private void moveSO() {
-		for(int i = (Board.DIMY - 1); i >= 0; i--) {
-			for(int j = 0; j < Board.DIMX; j++) {
+		boolean canMove = true;
+		for (int i = 1; i < Board.DIMX; i = i + 2) {
+			BoardPlace bp = board.getBoardPlace(i, Board.DIMY - 1);
+			if (bp.getPiece() != null) {
+				canMove = false;
+			}
+		}
+		for (int i = (Board.DIMY - 1); i >= 0; i--) {
+			for (int j = 0; j < Board.DIMX; j++) {
 				BoardPlace bp = board.getBoardPlace(j, i);
-				if(((i == Board.DIMY-1 && j%2==1) || j == 0) && bp.getPiece() != null) {
+				if ((j == 0 && bp.getPiece() != null) || !canMove) {
 					lb_message.setText("Can't move SO! Southwestern limit of map reached");
 					return;
 				}
@@ -895,10 +1122,17 @@ public class Game extends JFrame {
 	 * move hive SE, if it can
 	 */
 	private void moveSE() {
-		for(int i = (Board.DIMY - 1); i >= 0; i--) {
-			for(int j = (Board.DIMX-1); j >= 0; j--) {
+		boolean canMove = true;
+		for (int i = (Board.DIMX - 2); i >= 0; i = i - 2) {
+			BoardPlace bp = board.getBoardPlace(i, Board.DIMY - 1);
+			if (bp.getPiece() != null) {
+				canMove = false;
+			}
+		}
+		for (int i = (Board.DIMY - 1); i >= 0; i--) {
+			for (int j = (Board.DIMX - 1); j >= 0; j--) {
 				BoardPlace bp = board.getBoardPlace(j, i);
-				if(((i == Board.DIMY-1 && j%2==1) || j == Board.DIMX-1) && bp.getPiece() != null) {
+				if ((j == Board.DIMX - 1 && bp.getPiece() != null) || !canMove) {
 					lb_message.setText("Can't move SE! Southeastern limit of map reached");
 					return;
 				}
@@ -906,5 +1140,4 @@ public class Game extends JFrame {
 			}
 		}
 	}
-
 }

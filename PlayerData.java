@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -16,7 +15,10 @@ import javax.swing.border.Border;
 import tps.tp4.pieces.Ant;
 import tps.tp4.pieces.Beetle;
 import tps.tp4.pieces.Grasshopper;
+import tps.tp4.pieces.Ladybug;
+import tps.tp4.pieces.Mosquito;
 import tps.tp4.pieces.Piece;
+import tps.tp4.pieces.PillBug;
 import tps.tp4.pieces.QueenBee;
 import tps.tp4.pieces.Spider;
 
@@ -36,7 +38,7 @@ public class PlayerData {
 	private final PiecesAndItsNumber[] ListaDePecas = new PiecesAndItsNumber[] {
 			new PiecesAndItsNumber(PType.QUEENBEE, 1), new PiecesAndItsNumber(PType.BEETLE, 2),
 			new PiecesAndItsNumber(PType.GRASHOPPER, 2), new PiecesAndItsNumber(PType.SPIDER, 3),
-			new PiecesAndItsNumber(PType.ANT, 3) };
+			new PiecesAndItsNumber(PType.MOSQUITO, 1), new PiecesAndItsNumber(PType.LADYBUG, 1), new PiecesAndItsNumber(PType.PILLBUG, 1) };
 
 	private JPanel sidePanel;
 	private JLabel movesLabel;
@@ -355,6 +357,21 @@ enum PType {
 	ANT {
 		Piece createNew(Game game, boolean isFromPlayerA) {
 			return new Ant(game, isFromPlayerA);
+		};
+	},
+	MOSQUITO {
+		Piece createNew(Game game, boolean isFromPlayerA) {
+			return new Mosquito(game, isFromPlayerA);
+		};
+	},
+	LADYBUG {
+		Piece createNew(Game game, boolean isFromPlayerA) {
+			return new Ladybug(game, isFromPlayerA);
+		};
+	},
+	PILLBUG {
+		Piece createNew(Game game, boolean isFromPlayerA) {
+			return new PillBug(game, isFromPlayerA);
 		};
 	};
 
