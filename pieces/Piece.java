@@ -3,6 +3,7 @@ package tps.tp4.pieces;
 import java.awt.Color;
 import java.awt.Point;
 
+import sun.tools.serialver.resources.serialver;
 import tps.tp4.Board;
 import tps.tp4.Game;
 import tps.tp4.Game.Direction;
@@ -18,6 +19,7 @@ public abstract class Piece {
 	private String name;
 	private Color color;
 	private boolean isBelow;
+
 	/**
 	 * constructor
 	 */
@@ -33,13 +35,13 @@ public abstract class Piece {
 	 * toString
 	 */
 	public String toString() {
-		return "The piece " + getName() + " with color " + getColor()+ " is from player A? -> " + isFromPlayerA();
+		return "The piece " + getName() + " with color " + getColor() + " is from player A? -> " + isFromPlayerA();
 	}
 
 	public String getName() {
 		return this.name;
 	}
-	
+
 	/**
 	 * get color
 	 */
@@ -85,16 +87,22 @@ public abstract class Piece {
 	 * checks if the x, y received position have one neighbor that is not me
 	 */
 	protected boolean haveValidNeighbour(int x, int y) {
-		for(int i = x - 1; i <= x + 1; i++) {
-			for(int j = y - 1; j <= j + 1; j++) {
-				if(!game.getBoard().isInside(i, j))
+		for (int i = x - 1; i <= x + 1; i++) {
+			for (int j = y - 1; j <= j + 1; j++) {
+				if (!game.getBoard().isInside(i, j))
 					continue;
-				if(x == i && y == j)
+				if (x == i && y == j)
 					continue;
-				if(game.getBoard().getBoardPlace(i, j).getPiece() != null)
+				if (searchPiece(i, j))
 					return true;
 			}
 		}
+		return false;
+	}
+
+	protected boolean searchPiece(int x, int y) {
+		if (game.getBoard().getPiece(x, y) != null)
+			return true;
 		return false;
 	}
 
@@ -102,28 +110,36 @@ public abstract class Piece {
 	 * move one step if it is verify the rules
 	 */
 	protected boolean moveOneCheckedStep(int x, int y) {
-		
-		//TODO
-		return false; //caso não seja
-	}
-
-	/**
-	 * move to the destination if the move from the current position to the
-	 * destiny doesn't violate the one hive rule. It can move several steps.
-	 */
-	protected boolean moveWithOnehiveRuleChecked(int x, int y) {
-		if(moveTo(x,y) == true) { //caso o movimento seja de acordo com as regras
-			setXY(x,y);
-			return true;
+		Direction d  = getDirection(getX(), getY(), x, y);
+		switch(d) {
+		case N: if(searchPiece(x+1, y) && searchPiece(x-1, y)) return true;
+				else return false;
+		case S: if(searchPiece(x+1, y) && searchPiece(x-1, y)) return true;
+				else return false;
+		case NO:if(searchPiece(x, y-1) && searchPiece(x-2, y)) return true;
+				else return false;
+		case SE:if(searchPiece(x, y-1) && searchPiece(x-2, y)) return true;
+				else return false;
+		case NE:if(searchPiece(x, y-1) && searchPiece(x+2, y)) return true;
+				else return false;
+		case SO:if(searchPiece(x, y-1) && searchPiece(x+2, y)) return true;
+				else return false;
 		}
 		return false; //caso não seja
 	}
 
 	/**
+	 * move to the destination if the move from the current position to the destiny
+	 * doesn't violate the one hive rule. It can move several steps.
+	 */
+	protected boolean moveWithOnehiveRuleChecked(int x, int y) {
+		return false;
+	}
+
+	/**
 	 * get the direction from start coordinates to destiny coordinates
 	 */
-	protected static Direction getDirection(int fromX, int fromY, int toX,
-			int toY) {
+	protected static Direction getDirection(int fromX, int fromY, int toX, int toY) {
 
 		for (Direction d : Direction.values()) {
 			Point p = Board.getNeighbourPoint(fromX, fromY, d);

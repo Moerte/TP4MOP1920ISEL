@@ -5,18 +5,15 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import tps.tp4.Game.Direction;
 import tps.tp4.pieces.Piece;
-import tps.tp4.pieces.QueenBee;
 
 public class Board extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -73,32 +70,29 @@ public class Board extends JPanel {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-
+				
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-
+				
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
+				
 
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
+				
 
 			}
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int b = e.getButton();
-				// System.out.println(e);
 				switch (b) {
 				case MouseEvent.BUTTON1:
 					int posX = e.getX();
@@ -272,7 +266,7 @@ public class Board extends JPanel {
 	 * pieces.
 	 */
 	public boolean justOneHive(int x, int y) {
-		int nPieces = game.getPlayerData(true).getNumberOfPiecesOnBoard()+ game.getPlayerData(false).getNumberOfPiecesOnBoard();
+		int nPieces = playerAData.getNumberOfPiecesOnBoard()+ playerBData.getNumberOfPiecesOnBoard();
 		List<Piece> l = new ArrayList<Piece>();
 		this.getPiecesFromThisPoint(x, y, l);
 		return l.size() == nPieces;
@@ -283,7 +277,6 @@ public class Board extends JPanel {
 	 * the List received.
 	 */
 	private void getPiecesFromThisPoint(int x, int y, List<Piece> pieces) {
-		// TODO Falta para peças sobrepostas
 		Piece p = board[x][y].getPiece();
 		if(p != null)
 			pieces.add(p);

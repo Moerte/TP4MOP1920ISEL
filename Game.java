@@ -12,6 +12,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -29,11 +31,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeSelectionModel;
 
 import tps.layouts.CenterLayout;
@@ -63,6 +65,7 @@ public class Game extends JFrame {
 	private static final int MAX_NUMBER_OF_MOVES_TO_PLACE_QUEENBEE = 4;
 
 	private JLabel mainLabel;
+	// private JLabel subMainLabel;
 	private HiveLabel currentHiveLabel = null;
 	private Piece currentPiece = null;
 	private JPanel controlPanelOut;
@@ -128,8 +131,8 @@ public class Game extends JFrame {
 	private void loadResources() {
 
 		String fontType = "Comic Sans MS";
-		int size = 20;
-		this.fontCurrentPlayer = new Font(fontType, Font.BOLD, size);
+		int size = 16;
+		this.fontCurrentPlayer = new Font(fontType,Font.PLAIN, size);
 		this.fontPieces = new Font(fontType, Font.BOLD, size);
 	}
 
@@ -145,7 +148,8 @@ public class Game extends JFrame {
 		setLayout(new CenterLayout());
 
 		setLocationRelativeTo(null);
-
+		ImageIcon img = new ImageIcon(this.getClass().getResource("images/logo/hiveLogo2.png"));
+		setIconImage(img.getImage());
 		board = new Board(this, fontPieces);
 		add(board, BorderLayout.CENTER);
 
@@ -161,8 +165,9 @@ public class Game extends JFrame {
 					startAgain();
 					break;
 				case "start_again":
+					ImageIcon iconStartAgain = new ImageIcon(this.getClass().getResource("images/icon/hiveIconMedium.png"));
 					int n = JOptionPane.showConfirmDialog(that, "Are you sure about your decision?",
-							"Restart Game Confirmation", JOptionPane.YES_NO_OPTION);
+							"Restart Game Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, iconStartAgain);
 					if (n == JOptionPane.YES_OPTION) {
 						enableControlButtons(true);
 						startAgain();
@@ -251,9 +256,9 @@ public class Game extends JFrame {
 		bn_giveUp.addActionListener(al);
 		buttons.add(bn_giveUp);
 
-		// TODO tirar a margem entre os botões e a label
 		controlPanelOut = new JPanel();
 		lb_message = new JLabel("Log do Jogo");
+		lb_message.setFont(fontCurrentPlayer);
 		lb_message.setPreferredSize(new Dimension(500, 20));
 		lb_message.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		controlPanelOut.add(lb_message);
@@ -276,8 +281,8 @@ public class Game extends JFrame {
 		currentPlayerData = playerAData;
 
 		// Main Label
-		mainLabel = new JLabel("HIVE GAME: Current Player -> " + "Player A", SwingConstants.CENTER);
-		mainLabel.setFont(this.fontCurrentPlayer);
+		mainLabel = new JLabel(img);
+		lb_message.setText("Current Player -> " + "Player A");
 		mainLabel.setOpaque(true);
 		mainLabel.setBackground(Color.LIGHT_GRAY);
 		add(mainLabel, BorderLayout.NORTH);
@@ -341,7 +346,6 @@ public class Game extends JFrame {
 
 		menu.addSeparator();
 
-		// TODO Adicionar foto ao menu
 		aboutItem = new JMenuItem("About", KeyEvent.VK_A);
 		aboutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
 		aboutItem.addActionListener(al);
@@ -360,23 +364,35 @@ public class Game extends JFrame {
 	 * activate About window
 	 */
 	private void about() {
-		ImageIcon icon = new ImageIcon(this.getClass().getResource("pictures/Coisas.jpeg"));
-		JOptionPane.showMessageDialog(this, "Hive Game - V 1.0\nProduced by:\nNuno Oliveira and Eduardo Marques.",
-				"About information.", JOptionPane.INFORMATION_MESSAGE, icon);
+		ImageIcon icon = new ImageIcon(this.getClass().getResource("images/pictures/Coisas.jpeg"));
+
+		String content = null;
+		try {
+			content = new String(Files.readAllBytes(Paths.get("src/tps/tp4/about.txt")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		JOptionPane.showMessageDialog(this, content, "About information.", JOptionPane.INFORMATION_MESSAGE, icon);
 	}
 
 	/**
 	 * activate View scores window
 	 */
 	private void viewScores() {
+		ImageIcon iconScore = new ImageIcon(this.getClass().getResource("images/icon/hiveIconMedium.png"));
 		// TODO Adicionar as pontuações (LER DOCOMENTO)
-		JOptionPane.showMessageDialog(this, "Top Scores:\n", "Top Scores", JOptionPane.INFORMATION_MESSAGE);
+		String content = null;
+		try {
+			content = new String(Files.readAllBytes(Paths.get("src/tps/tp4/scores.txt")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		JOptionPane.showMessageDialog(this, content, "Top Scores", JOptionPane.INFORMATION_MESSAGE, iconScore);
 	}
 
 	/**
-	 * 
+	 * activate View Rules Window
 	 */
-	// EM TESTES => COMEÇO
 	private void viewRules() {
 
 		// Create the nodes.
@@ -386,6 +402,15 @@ public class Game extends JFrame {
 		// Create a tree that allows one selection at a time.
 		tree = new JTree(top);
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+
+		ImageIcon leafIcon = new ImageIcon(this.getClass().getResource("images/icon/hiveIconSmall.png"));
+		ImageIcon leafIconPiece = new ImageIcon(this.getClass().getResource("images/icon/queenbeenIcon.png"));
+
+		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+		renderer.setLeafIcon(leafIconPiece);
+		renderer.setOpenIcon(leafIcon);
+		renderer.setClosedIcon(leafIcon);
+		tree.setCellRenderer(renderer);
 
 		TreeSelectionListener tsl = new TreeSelectionListener() {
 			@Override
@@ -429,7 +454,8 @@ public class Game extends JFrame {
 		splitPane.setDividerLocation(100);
 
 		splitPane.setPreferredSize(new Dimension(500, 300));
-		JOptionPane.showMessageDialog(this, splitPane, "Rules", JOptionPane.INFORMATION_MESSAGE);
+		ImageIcon iconRules = new ImageIcon(this.getClass().getResource("images/icon/hiveIconMedium.png"));
+		JOptionPane.showMessageDialog(this, splitPane, "Rules", JOptionPane.INFORMATION_MESSAGE, iconRules);
 	}
 
 	private void createNodes(DefaultMutableTreeNode top) {
@@ -440,27 +466,27 @@ public class Game extends JFrame {
 		top.add(category);
 
 		// Components
-		book = new DefaultMutableTreeNode(new BookInfo("Components", "component.html"));
+		book = new DefaultMutableTreeNode(new BookInfo("Components", "rules/component.html"));
 		category.add(book);
 
 		// Setup of the game
-		book = new DefaultMutableTreeNode(new BookInfo("Setup", "setup.html"));
+		book = new DefaultMutableTreeNode(new BookInfo("Setup", "rules/setup.html"));
 		category.add(book);
 
 		// Objective of the game
-		book = new DefaultMutableTreeNode(new BookInfo("Objective of the Game", "objective.html"));
+		book = new DefaultMutableTreeNode(new BookInfo("Objective of the Game", "rules/objective.html"));
 		category.add(book);
 
 		// Game play
-		book = new DefaultMutableTreeNode(new BookInfo("Game Play", "gameplay.html"));
+		book = new DefaultMutableTreeNode(new BookInfo("Game Play", "rules/gameplay.html"));
 		category.add(book);
 
 		// Placing
-		book = new DefaultMutableTreeNode(new BookInfo("Placing", "placing.html"));
+		book = new DefaultMutableTreeNode(new BookInfo("Placing", "rules/placing.html"));
 		category.add(book);
 
 		// Moving
-		book = new DefaultMutableTreeNode(new BookInfo("Moving", "moving.html"));
+		book = new DefaultMutableTreeNode(new BookInfo("Moving", "rules/moving.html"));
 		category.add(book);
 
 		// Pieces
@@ -468,52 +494,52 @@ public class Game extends JFrame {
 		top.add(category);
 
 		// Queen Bee
-		book = new DefaultMutableTreeNode(new BookInfo("Queen Bee", "/pieces/test.html"));
+		book = new DefaultMutableTreeNode(new BookInfo("Queen Bee", "rules/pieces/queenbee.html"));
 		category.add(book);
 
 		// Beetle
-		book = new DefaultMutableTreeNode(new BookInfo("Beetle", "/pieces/test.html"));
+		book = new DefaultMutableTreeNode(new BookInfo("Beetle", "rules/pieces/beetle.html"));
 		category.add(book);
-		
+
 		// Grasshopper
-		book = new DefaultMutableTreeNode(new BookInfo("Grasshopper", "/pieces/test.html"));
+		book = new DefaultMutableTreeNode(new BookInfo("Grasshopper", "rules/pieces/grasshopper.html"));
 		category.add(book);
 
 		// Spider
-		book = new DefaultMutableTreeNode(new BookInfo("Spider", "/pieces/test.html"));
+		book = new DefaultMutableTreeNode(new BookInfo("Spider", "rules/pieces/spider.html"));
 		category.add(book);
-		
+
 		// Ant
-		book = new DefaultMutableTreeNode(new BookInfo("Ant", "/pieces/test.html"));
+		book = new DefaultMutableTreeNode(new BookInfo("Ant", "rules/pieces/ant.html"));
 		category.add(book);
 
 		// Ladybug
-		book = new DefaultMutableTreeNode(new BookInfo("Ladybug", "/pieces/test.html"));
+		book = new DefaultMutableTreeNode(new BookInfo("Ladybug", "rules/pieces/ladybug.html"));
 		category.add(book);
-		
+
 		// Mosquito
-		book = new DefaultMutableTreeNode(new BookInfo("Mosquito", "/pieces/test.html"));
+		book = new DefaultMutableTreeNode(new BookInfo("Mosquito", "rules/pieces/mosquito.html"));
 		category.add(book);
 
 		// Pillbug
-		book = new DefaultMutableTreeNode(new BookInfo("Pillbug", "/pieces/test.html"));
+		book = new DefaultMutableTreeNode(new BookInfo("Pillbug", "rules/pieces/pillbug.html"));
 		category.add(book);
-		
 
 		// Restrictions
 		category = new DefaultMutableTreeNode("Restrictions");
 		top.add(category);
 
 		// One Hive Move
-		book = new DefaultMutableTreeNode(new BookInfo("One Hive Move", "/restrictions/onehivemove.html"));
+		book = new DefaultMutableTreeNode(new BookInfo("One Hive Move", "rules/restrictions/onehivemove.html"));
 		category.add(book);
 
 		// Freedom to Move
-		book = new DefaultMutableTreeNode(new BookInfo("Freedom to Move", "/restrictions/freedomtomove.html"));
+		book = new DefaultMutableTreeNode(new BookInfo("Freedom to Move", "rules/restrictions/freedomtomove.html"));
 		category.add(book);
-		
+
 		// Unable to Move or to Place
-		book = new DefaultMutableTreeNode(new BookInfo("Unable to Move or to Place", "/restrictions/unabletomove.html"));
+		book = new DefaultMutableTreeNode(
+				new BookInfo("Unable to Move or to Place", "rules/restrictions/unabletomove.html"));
 		category.add(book);
 
 	}
@@ -524,8 +550,7 @@ public class Game extends JFrame {
 
 		public BookInfo(String book, String filename) {
 			bookName = book;
-			System.out.println("Getting -> " + "rules/" + filename);
-			bookURL = this.getClass().getResource("rules/" + filename);
+			bookURL = this.getClass().getResource("docs/" + filename);
 			if (bookURL == null) {
 				System.err.println("Couldn't find file: " + filename);
 			}
@@ -537,7 +562,7 @@ public class Game extends JFrame {
 	}
 
 	private void initReference() {
-		String s = "rules/" + "reference.html";
+		String s = "docs/rules/" + "reference.html";
 		referenceURL = this.getClass().getResource(s);
 		if (referenceURL == null) {
 			System.err.println("Couldn't open help file: " + s);
@@ -556,7 +581,6 @@ public class Game extends JFrame {
 			System.err.println("Attempted to read a bad URL: " + url);
 		}
 	}
-	// EM TESTES => FIM
 
 	/**
 	 * get color from player
@@ -604,13 +628,13 @@ public class Game extends JFrame {
 			isPlayerAToPlay = false;
 			playerAData.setPlayerPanelActive(isPlayerAToPlay);
 			playerBData.setPlayerPanelActive(true);
-			mainLabel.setText("HIVE GAME: Current Player -> Player B");
+			lb_message.setText("Current Player -> Player B");
 		} else {
 			currentPlayerData = playerAData;
 			isPlayerAToPlay = true;
 			playerBData.setPlayerPanelActive(!isPlayerAToPlay);
 			playerAData.setPlayerPanelActive(isPlayerAToPlay);
-			mainLabel.setText("HIVE GAME: Current Player -> Player A");
+			lb_message.setText("Current Player -> Player A");
 		}
 		if (currentHiveLabel != null) {
 			currentHiveLabel.setToNormal();
@@ -632,13 +656,11 @@ public class Game extends JFrame {
 		playerAData.setNumberOfPiecesOnBoard(0);
 		playerBData.setNumberOfMoves(0);
 		playerBData.setNumberOfPiecesOnBoard(0);
-		if (!isPlayerAToPlay) {
-			currentPlayerData = playerAData;
-			currentPlayerData.setPlayerPanelActive(true);
-			playerBData.setPlayerPanelActive(false);
-			isPlayerAToPlay = true;
-			mainLabel.setText("HIVE GAME: Current Player -> Player " + (isPlayerAToPlay ? "A" : "B"));
-		}
+		currentPlayerData = playerAData;
+		currentPlayerData.setPlayerPanelActive(true);
+		playerBData.setPlayerPanelActive(false);
+		isPlayerAToPlay = true;
+		lb_message.setText("Current Player -> Player A");
 		board.resetBoard();
 		board.repaint();
 		if (currentPiece != null)
@@ -650,7 +672,7 @@ public class Game extends JFrame {
 	}
 
 	/**
-	 * TODO
+	 * TODO Fazer a descrição do metodo
 	 * 
 	 * @param component
 	 */
@@ -669,8 +691,9 @@ public class Game extends JFrame {
 	}
 
 	private void giveUp() {
+		ImageIcon iconGiveUp = new ImageIcon(this.getClass().getResource("images/icon/hiveIconMedium.png"));
 		int n = JOptionPane.showConfirmDialog(this, "Are you that chicken?", "Give Up Confirmation",
-				JOptionPane.YES_NO_OPTION);
+				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, iconGiveUp);
 		if (n == JOptionPane.YES_OPTION) {
 			this.endOfGame = true;
 
@@ -714,7 +737,6 @@ public class Game extends JFrame {
 				break;
 			}
 		}
-		System.out.println("CEnas =>" + enemyNeib);
 		return enemyNeib;
 	}
 
@@ -801,7 +823,6 @@ public class Game extends JFrame {
 				}
 			}
 		}
-		// currentPiece = currentHiveLabel.getPiece();
 		board.addPiece(currentHiveLabel.getPiece(), x, y);
 		board.repaint();
 		currentHiveLabel.deactivate();
@@ -927,6 +948,20 @@ public class Game extends JFrame {
 			else
 				playerAData.setPlayerWon(true);
 			return true;
+			
+		}else {
+			if(checkFinishGame(true) && checkFinishGame(false)) {
+				lb_message.setText("It's a Draw!!!");
+				ImageIcon iconFinish = new ImageIcon(this.getClass().getResource("images/icon/hiveIconMedium.png"));
+				JOptionPane.showMessageDialog(this, "It's a Draw!!", "DRAW!", JOptionPane.INFORMATION_MESSAGE, iconFinish);
+				return true;
+			}else if(checkFinishGame(true)) {
+				playerBData.setPlayerWon(true);
+				return true;
+			}else if(checkFinishGame(false)) {
+				playerAData.setPlayerWon(true);
+				return true;
+			}
 		}
 		return false;
 	}
@@ -968,8 +1003,9 @@ public class Game extends JFrame {
 	 */
 	private void doFinishGameActions() {
 		boolean checkWinner = playerAData.playerWon();
+		ImageIcon iconFinish = new ImageIcon(this.getClass().getResource("images/icon/hiveIconMedium.png"));
 		JOptionPane.showMessageDialog(this, "Congratulations Player " + (checkWinner ? "A" : "B"), "Winner Panel",
-				JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.INFORMATION_MESSAGE, iconFinish);
 		lb_message.setText("Winner: Player " + (checkWinner ? "A" : "B"));
 		enableControlButtons(false);
 		bn_newGame.setVisible(true);
@@ -1060,8 +1096,8 @@ public class Game extends JFrame {
 				break;
 			}
 		}
-		for (int i = 0; i < Board.DIMY; i++) {
-			for (int j = 0; j < Board.DIMX; j++) {
+		for (int j = 0; j < Board.DIMX; j++) {
+			for (int i = 0; i < Board.DIMY; i++) {
 				BoardPlace bp = board.getBoardPlace(j, i);
 				if ((j == 0 && bp.getPiece() != null) || !canMove) {
 					lb_message.setText("Can't move NO! Northwestern limit of map reached");
@@ -1083,8 +1119,8 @@ public class Game extends JFrame {
 				canMove = false;
 			}
 		}
-		for (int i = 0; i < Board.DIMY; i++) {
-			for (int j = (Board.DIMX - 1); j >= 0; j--) {
+		for (int j = (Board.DIMX - 1); j >= 0; j--) {
+			for (int i = 0; i < Board.DIMY; i++) {
 				BoardPlace bp = board.getBoardPlace(j, i);
 				if ((j == (Board.DIMX - 1) && bp.getPiece() != null) | !canMove) {
 					lb_message.setText("Can't move NE! Northeastern limit of map reached");
