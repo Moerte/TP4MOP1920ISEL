@@ -636,10 +636,15 @@ public class Game extends JFrame {
 			playerAData.setPlayerPanelActive(isPlayerAToPlay);
 			lb_message.setText("Current Player -> Player A");
 		}
+		if(!currentPlayerData.isQueenBeeAlreadyOnBoard()) placingQueenBee = false; 
 		if (currentHiveLabel != null) {
 			currentHiveLabel.setToNormal();
 			currentHiveLabel = null;
 		}
+		 if(currentPiece != null) {
+			 board.getBoardPlace(currentPiece.getX(), currentPiece.getY()).setSelected(false);
+			 currentPiece = null;
+		 }
 
 	}
 
@@ -661,14 +666,15 @@ public class Game extends JFrame {
 		playerBData.setPlayerPanelActive(false);
 		isPlayerAToPlay = true;
 		lb_message.setText("Current Player -> Player A");
-		board.resetBoard();
-		board.repaint();
 		if (currentPiece != null)
 			board.getBoardPlace(currentPiece.getX(), currentPiece.getY()).setSelected(false);
+		board.resetBoard();
+		board.repaint();
 		currentHiveLabel = null;
 		currentPiece = null;
 		bn_newGame.setVisible(false);
 		bn_newGame.setEnabled(false);
+		
 	}
 
 	/**
@@ -755,25 +761,27 @@ public class Game extends JFrame {
 			if (p == null)
 				return;
 			if (currentPiece != null) {
-				// TODO
-				System.out.println("Cheguei");
-				if (currentPiece.moveTo(x, y)) {
+				if(currentPiece == p) {
+					board.getBoardPlace(x, y).setSelected(false);
+					currentPiece = null;
+					return;
+				}
+				if (currentPiece.moveTo(x, y) && currentPlayerData.isQueenBeeAlreadyOnBoard()) {
 					board.getBoardPlace(currentPiece.getX(), currentPiece.getY()).setSelected(false);
 					board.repaint();
 					changePlayer();
+					return;
 				}
+				lb_message.setText("Invalid movement!");
 				return;
 			} else {
+				if(!isPlayerAToPlay && p.isFromPlayerA() || isPlayerAToPlay && !p.isFromPlayerA()) {
+					return;
+				}
 				currentPiece = p;
 				board.getBoardPlace(x, y).setSelected(true);
 				return;
 			}
-		}
-		if (currentPiece != null) {
-			System.out.println("Cheguei 222");
-			currentPiece.moveTo(x, y);
-			// return;
-			// currentPiece.moveTo(x, y);
 		}
 		if (isPlayerAToPlay) {
 			if (currentPlayerData.getNumberOfMoves() != 0 && !this.onlyHaveFriendlyNeighbors(x, y)) {
@@ -784,10 +792,6 @@ public class Game extends JFrame {
 				if (p != null) {
 					lb_message.setText("All pieces must be played on the Board");
 					return;
-					// TODO LOG: Todas as peças tem de ser jogadas em campo (não pode ser por cima
-					// de outra peça)
-				} else {
-					// TODO Podes jogar a peça
 				}
 			}
 		} else {
@@ -802,9 +806,7 @@ public class Game extends JFrame {
 					if (board.getPiece(k, j) != null)
 						validNeib = true;
 				}
-				if (validNeib) {
-					// TODO Podes jogar
-				} else {
+				if (!validNeib) {
 					lb_message.setText("The Piece has must be played adjacent to another piece");
 					return;
 				}
@@ -816,13 +818,10 @@ public class Game extends JFrame {
 				if (p != null) {
 					lb_message.setText("All pieces must be played on the Board");
 					return;
-					// TODO LOG: Todas as peças tem de ser jogadas em campo (não pode ser por cima
-					// de outra peça)
-				} else {
-					// TODO Podes jogar a peça
 				}
 			}
 		}
+		
 		board.addPiece(currentHiveLabel.getPiece(), x, y);
 		board.repaint();
 		currentHiveLabel.deactivate();
@@ -846,6 +845,10 @@ public class Game extends JFrame {
 				currentHiveLabel = null;
 				return;
 			}
+		}
+		if(currentPiece != null) {
+			board.getBoardPlace(currentPiece.getX(), currentPiece.getY()).setSelected(false);
+			currentPiece = null;
 		}
 		currentHiveLabel = hl;
 		currentHiveLabel.activate();
@@ -936,6 +939,7 @@ public class Game extends JFrame {
 		board.remPiece(p);
 		board.addPiece(p, x, y);
 		p.setXY(x, y);
+		board.repaint();
 	}
 
 	/**

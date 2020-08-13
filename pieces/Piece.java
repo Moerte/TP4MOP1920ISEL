@@ -109,23 +109,9 @@ public abstract class Piece {
 	/**
 	 * move one step if it is verify the rules
 	 */
-	protected boolean moveOneCheckedStep(int x, int y) {
-		Direction d  = getDirection(getX(), getY(), x, y);
-		switch(d) {
-		case N: if(searchPiece(x+1, y) && searchPiece(x-1, y)) return true;
-				else return false;
-		case S: if(searchPiece(x+1, y) && searchPiece(x-1, y)) return true;
-				else return false;
-		case NO:if(searchPiece(x, y-1) && searchPiece(x-2, y)) return true;
-				else return false;
-		case SE:if(searchPiece(x, y-1) && searchPiece(x-2, y)) return true;
-				else return false;
-		case NE:if(searchPiece(x, y-1) && searchPiece(x+2, y)) return true;
-				else return false;
-		case SO:if(searchPiece(x, y-1) && searchPiece(x+2, y)) return true;
-				else return false;
-		}
-		return false; //caso não seja
+	protected boolean moveOneCheckedStep(int x, int y) {	
+		// TODO
+		return false;
 	}
 
 	/**
@@ -133,7 +119,25 @@ public abstract class Piece {
 	 * doesn't violate the one hive rule. It can move several steps.
 	 */
 	protected boolean moveWithOnehiveRuleChecked(int x, int y) {
-		return false;
+		int currentX = -1, currentY = -1;
+		Direction d = null;
+		if(currentX < 0) {
+			d = getDirection(getX(), getY(), x, y);
+			Point p = Board.getNeighbourPoint(getX(), getY(), d);
+			currentX = (int)p.getX();
+			currentY = (int)p.getY();
+		}
+		while(currentX != x && currentY != y) {
+			if(!game.canPhysicallyMoveTo(currentX, currentY, d)||!game.getBoard().justOneHive(x, y)) {
+				return false;
+			}
+			d = getDirection(currentX, currentY, x, y);
+			Point p = Board.getNeighbourPoint(currentX, currentY, d);
+			currentX = (int)p.getX();
+			currentY = (int)p.getY();
+		
+		}
+		return true;
 	}
 
 	/**
@@ -141,15 +145,37 @@ public abstract class Piece {
 	 */
 	protected static Direction getDirection(int fromX, int fromY, int toX, int toY) {
 
-		for (Direction d : Direction.values()) {
-			Point p = Board.getNeighbourPoint(fromX, fromY, d);
-			if (p == null)
-				continue;
-			if (p.x == toX && p.y == toY) {
-				return d;
+		Direction d1 = null;
+		if( fromX != toX && fromY != toY) {
+			if(fromX % 2 == 0) {
+				if(toX > fromX && toY < fromY)
+					d1 = Direction.NE;
+				else if(toX > fromX)
+					d1 = Direction.SE;
+				else if(toX == fromX && toY < fromY)
+					d1 = Direction.N;
+				else if(toX == fromX && toY > fromY)
+					d1 = Direction.S;
+				else if(toX < fromX && toY <= fromY)
+					d1 = Direction.NO;
+				else
+					d1 = Direction.SO;
+			} else {
+				if(toX > fromX && toY <= fromY)
+					d1 = Direction.NE;
+				else if(toX > fromX)
+					d1 = Direction.SE;
+				else if(toX == fromX && toY < fromY)
+					d1 = Direction.N;
+				else if(toX == fromX && toY > fromY)
+					d1 = Direction.S;
+				else if(toX < fromX && toY > fromY)
+					d1 = Direction.SO;
+				else
+					d1 = Direction.NO;
 			}
 		}
-		return null;
+		return d1;
 	}
 
 }
