@@ -76,7 +76,7 @@ public class Spider extends Piece {
 			return false;
 
 		// TODO
-		return true;
+		return false;
 	}
 
 }

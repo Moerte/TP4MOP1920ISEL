@@ -3,7 +3,6 @@ package tps.tp4.pieces;
 import java.awt.Color;
 import java.awt.Point;
 
-import sun.tools.serialver.resources.serialver;
 import tps.tp4.Board;
 import tps.tp4.Game;
 import tps.tp4.Game.Direction;
@@ -123,6 +122,7 @@ public abstract class Piece {
 		Direction d = null;
 		if(currentX < 0) {
 			d = getDirection(getX(), getY(), x, y);
+			System.out.println("Inside X "+ getX()+ " Inside Y "+ getY()+ " X "+x+" Y "+y);
 			Point p = Board.getNeighbourPoint(getX(), getY(), d);
 			currentX = (int)p.getX();
 			currentY = (int)p.getY();
@@ -146,7 +146,7 @@ public abstract class Piece {
 	protected static Direction getDirection(int fromX, int fromY, int toX, int toY) {
 
 		Direction d1 = null;
-		if( fromX != toX && fromY != toY) {
+		if( fromX != toX || fromY != toY) {
 			if(fromX % 2 == 0) {
 				if(toX > fromX && toY < fromY)
 					d1 = Direction.NE;
@@ -169,7 +169,7 @@ public abstract class Piece {
 					d1 = Direction.N;
 				else if(toX == fromX && toY > fromY)
 					d1 = Direction.S;
-				else if(toX < fromX && toY > fromY)
+				else if(toX < fromX && toY >= fromY)
 					d1 = Direction.SO;
 				else
 					d1 = Direction.NO;

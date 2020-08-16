@@ -138,6 +138,8 @@ public class Board extends JPanel {
 				board[i][j].clear();
 			}
 		}
+		playerAData.setNumberOfPiecesOnBoard(0);
+		playerBData.setNumberOfPiecesOnBoard(0);
 	}
 
 	/**
@@ -248,7 +250,11 @@ public class Board extends JPanel {
 	 */
 	public void addPiece(Piece p, int x, int y) {
 		board[x][y].addPiece(p);
+		System.out.println(p.isFromPlayerA());
+		if(p.isFromPlayerA()) game.getPlayerData(true).incNumberOfPiecesOnBoard();
+		else playerBData.incNumberOfPiecesOnBoard();
 		p.setXY(x, y);
+		System.out.println(playerAData.getNumberOfPiecesOnBoard());
 	}
 
 	/**
@@ -257,6 +263,8 @@ public class Board extends JPanel {
 	 */
 	public boolean remPiece(Piece p) {
 		int x = p.getX(), y = p.getY();
+		if(p.isFromPlayerA()) playerAData.decNumberOfPiecesOnBoard();
+		else playerBData.decNumberOfPiecesOnBoard();
 		return board[x][y].remPiece(p);
 	}
 

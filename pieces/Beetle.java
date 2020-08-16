@@ -31,9 +31,7 @@ public class Beetle extends Piece {
 			game.setStatusInfo("Invalid move - the destiny must be empty");
 			return false;
 		}
-
-		// execute search for all the coordinates, with limit of 3 steps
-		boolean found = false;
+		// execute search for all the coordinates
 		for (Direction d : Direction.values()) {
 			Point p = Board.getNeighbourPoint(getX(), getY(), d);
 			if (p == null)
@@ -41,20 +39,10 @@ public class Beetle extends Piece {
 
 			// TODO
 
-			//if (findPlace(p.x, p.y, x, y, 3, d)) {
-				found = true;
-				break;
-			//}
-		}
-
-		if (!found) {
-			game.setStatusInfo("Invalid move - the destiny can't be reached in 3 valid steps");
-			return false;
 		}
 
 		// move if one hive rule checked
 		boolean moved = moveWithOnehiveRuleChecked(x, y);
-
 		if (moved) {
 			System.out.println("Piece " + this + " with (x,y) of (" + getX() + ", " + getY() + ") moved to (" + x + ", "
 					+ y + ")");

@@ -758,8 +758,10 @@ public class Game extends JFrame {
 		}
 		if (currentHiveLabel == null) {
 			Piece p = board.getPiece(x, y);
-			if (p == null)
-				return;
+//			if (p == null) {
+//				System.out.println("Problema Na click on board");
+//				return;
+//			}
 			if (currentPiece != null) {
 				if(currentPiece == p) {
 					board.getBoardPlace(x, y).setSelected(false);
