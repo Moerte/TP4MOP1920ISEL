@@ -47,8 +47,8 @@ public class Board extends JPanel {
 	public Board(Game game, Font piecesFont) {
 		this.game = game;
 		this.piecesFont = piecesFont;
-		this.playerAData = game.getPlayerData(true);
-		this.playerBData = game.getPlayerData(false);
+		playerAData = game.getPlayerData(true);
+		playerBData = game.getPlayerData(false);
 		this.board = new BoardPlace[DIMX][DIMY];
 		setPreferredSize(new Dimension(600, 400));
 		initBoard();
@@ -250,11 +250,9 @@ public class Board extends JPanel {
 	 */
 	public void addPiece(Piece p, int x, int y) {
 		board[x][y].addPiece(p);
-		System.out.println(p.isFromPlayerA());
-		if(p.isFromPlayerA()) game.getPlayerData(true).incNumberOfPiecesOnBoard();
+		if(p.isFromPlayerA()) playerAData.incNumberOfPiecesOnBoard();
 		else playerBData.incNumberOfPiecesOnBoard();
 		p.setXY(x, y);
-		System.out.println(playerAData.getNumberOfPiecesOnBoard());
 	}
 
 	/**
@@ -277,6 +275,7 @@ public class Board extends JPanel {
 		int nPieces = playerAData.getNumberOfPiecesOnBoard()+ playerBData.getNumberOfPiecesOnBoard();
 		List<Piece> l = new ArrayList<Piece>();
 		this.getPiecesFromThisPoint(x, y, l);
+		// TODO Rever a questao do beetle poder subir para cima de outras peças
 		return l.size() == nPieces;
 	}
 	

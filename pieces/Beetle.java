@@ -23,24 +23,22 @@ public class Beetle extends Piece {
 	/**
 	 * Move this piece to x,y if doesn't violate the rules.
 	 * 
-	 * The Beetle can move only one step and be placed on top on another
-	 * piece(s). Should not violate the one hive rule.
+	 * The Beetle can move only one step and be placed on top on another piece(s).
+	 * Should not violate the one hive rule.
 	 */
 	public boolean moveTo(int x, int y) {
-		if (game.getBoard().getPiece(x, y) != null) {
-			game.setStatusInfo("Invalid move - the destiny must be empty");
-			return false;
-		}
+		boolean reachable = false;
 		// execute search for all the coordinates
 		for (Direction d : Direction.values()) {
 			Point p = Board.getNeighbourPoint(getX(), getY(), d);
 			if (p == null)
 				continue;
-
-			// TODO
-
+			if(p.getX() == x && p.getY() == y) {
+				reachable = true;
+				break;
+			}
 		}
-
+		if(!reachable) return false;
 		// move if one hive rule checked
 		boolean moved = moveWithOnehiveRuleChecked(x, y);
 		if (moved) {

@@ -109,25 +109,16 @@ public abstract class Piece {
 	 * move one step if it is verify the rules
 	 */
 	protected boolean moveOneCheckedStep(int x, int y) {	
-		// TODO
-		return false;
-	}
-
-	/**
-	 * move to the destination if the move from the current position to the destiny
-	 * doesn't violate the one hive rule. It can move several steps.
-	 */
-	protected boolean moveWithOnehiveRuleChecked(int x, int y) {
 		int currentX = -1, currentY = -1;
 		Direction d = null;
 		if(currentX < 0) {
 			d = getDirection(getX(), getY(), x, y);
-			System.out.println("Inside X "+ getX()+ " Inside Y "+ getY()+ " X "+x+" Y "+y);
 			Point p = Board.getNeighbourPoint(getX(), getY(), d);
 			currentX = (int)p.getX();
 			currentY = (int)p.getY();
 		}
 		while(currentX != x && currentY != y) {
+			System.out.println(game.getBoard().justOneHive(x, y));
 			if(!game.canPhysicallyMoveTo(currentX, currentY, d)||!game.getBoard().justOneHive(x, y)) {
 				return false;
 			}
@@ -138,6 +129,19 @@ public abstract class Piece {
 		
 		}
 		return true;
+	}
+
+	/**
+	 * move to the destination if the move from the current position to the destiny
+	 * doesn't violate the one hive rule. It can move several steps.
+	 */
+	protected boolean moveWithOnehiveRuleChecked(int x, int y) {
+		int originalX = getX(), originalY = getY();
+		game.moveUnconditional(this, x, y);
+		boolean oneHive = game.getBoard().justOneHive(x, y);
+		if(!oneHive) game.moveUnconditional(this, originalX, originalY);
+		else game.getBoard().repaint();
+		return oneHive;
 	}
 
 	/**

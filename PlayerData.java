@@ -215,6 +215,10 @@ public class PlayerData {
 		if (active)playerLabel.setBackground(ACTIVEPLAYERCOLOR);
 		else playerLabel.setBackground(INACTIVEPLAYERCOLOR);
 	}
+	
+	public void setQueenBee(Piece queen) {
+		queenBee = (QueenBee)queen;
+	}
 
 	/**
 	 * check if queen bee of this player is already on board

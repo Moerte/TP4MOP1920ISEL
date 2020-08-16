@@ -147,6 +147,16 @@ public class Game extends JFrame {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setLayout(new CenterLayout());
 
+		playerAData = new PlayerData(this, true);
+		JPanel panelA = new JPanel();
+		panelA = playerAData.getSidePanel();
+		add(panelA, BorderLayout.WEST);
+
+		playerBData = new PlayerData(this, false);
+		JPanel panelB = new JPanel();
+		panelB = playerBData.getSidePanel();
+		add(panelB, BorderLayout.EAST);
+		
 		setLocationRelativeTo(null);
 		ImageIcon img = new ImageIcon(this.getClass().getResource("images/logo/hiveLogo2.png"));
 		setIconImage(img.getImage());
@@ -266,16 +276,6 @@ public class Game extends JFrame {
 		controlPanel.add(buttons, BorderLayout.CENTER);
 		controlPanel.add(controlPanelOut, BorderLayout.SOUTH);
 		add(controlPanel, BorderLayout.SOUTH);
-
-		playerAData = new PlayerData(this, true);
-		JPanel panelA = new JPanel();
-		panelA = playerAData.getSidePanel();
-		add(panelA, BorderLayout.WEST);
-
-		playerBData = new PlayerData(this, false);
-		JPanel panelB = new JPanel();
-		panelB = playerBData.getSidePanel();
-		add(panelB, BorderLayout.EAST);
 
 		buildMenu();
 		currentPlayerData = playerAData;
@@ -758,19 +758,23 @@ public class Game extends JFrame {
 		}
 		if (currentHiveLabel == null) {
 			Piece p = board.getPiece(x, y);
-//			if (p == null) {
-//				System.out.println("Problema Na click on board");
-//				return;
-//			}
+			if (p == null && currentPiece == null) {
+				return;
+			}
 			if (currentPiece != null) {
 				if(currentPiece == p) {
 					board.getBoardPlace(x, y).setSelected(false);
 					currentPiece = null;
 					return;
 				}
+				int pastX = currentPiece.getX(), pastY = currentPiece.getY();
 				if (currentPiece.moveTo(x, y) && currentPlayerData.isQueenBeeAlreadyOnBoard()) {
-					board.getBoardPlace(currentPiece.getX(), currentPiece.getY()).setSelected(false);
+					board.getBoardPlace(pastX, pastY).setSelected(false);
 					board.repaint();
+					if(checkFinishGame(isPlayerAToPlay)) {
+						doFinishGameActions();
+						//return;
+					}
 					changePlayer();
 					return;
 				}
@@ -823,11 +827,18 @@ public class Game extends JFrame {
 				}
 			}
 		}
+		if(placingQueenBee) {
+			currentPlayerData.setQueenBee(currentHiveLabel.getPiece());
+			placingQueenBee = false;
+		}
 		
 		board.addPiece(currentHiveLabel.getPiece(), x, y);
 		board.repaint();
 		currentHiveLabel.deactivate();
 		currentHiveLabel = null;
+		if(checkFinishGame(isPlayerAToPlay)) {
+			doFinishGameActions();
+		}
 		changePlayer();
 	}
 
@@ -941,7 +952,6 @@ public class Game extends JFrame {
 		board.remPiece(p);
 		board.addPiece(p, x, y);
 		p.setXY(x, y);
-		board.repaint();
 	}
 
 	/**
