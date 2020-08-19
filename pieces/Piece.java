@@ -17,7 +17,6 @@ public abstract class Piece {
 
 	private String name;
 	private Color color;
-	private boolean isBelow;
 
 	/**
 	 * constructor
@@ -27,7 +26,6 @@ public abstract class Piece {
 		this.game = game;
 		this.isFromPlayerA = isFromPlayerA;
 		this.color = color;
-		this.isBelow = false;
 	}
 
 	/**

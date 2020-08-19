@@ -13,6 +13,8 @@ import tps.tp4.Game.Direction;
 public class Beetle extends Piece {
 	final static private Color color = Color.magenta;
 
+	private boolean isAbove;
+
 	/**
 	 * constructor
 	 */
@@ -33,12 +35,18 @@ public class Beetle extends Piece {
 			Point p = Board.getNeighbourPoint(getX(), getY(), d);
 			if (p == null)
 				continue;
-			if(p.getX() == x && p.getY() == y) {
+			if (p.getX() == x && p.getY() == y) {
 				reachable = true;
 				break;
 			}
 		}
-		if(!reachable) return false;
+		if (!reachable)
+			return false;
+		if (game.getBoard().getPiece(x, y) != null) {
+			if (!isAbove) {
+				game.getPlayerData(this.isFromPlayerA());
+			}
+		}
 		// move if one hive rule checked
 		boolean moved = moveWithOnehiveRuleChecked(x, y);
 		if (moved) {
