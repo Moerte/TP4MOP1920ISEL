@@ -35,12 +35,11 @@ public class Spider extends Piece {
 
 		// execute search for all the coordinates, with limit of 3 steps
 		boolean found = false;
+		
 		for (Direction d : Direction.values()) {
 			Point p = Board.getNeighbourPoint(getX(), getY(), d);
 			if (p == null)
 				continue;
-
-			// TODO
 
 			if (findPlace(p.x, p.y, x, y, 3, d)) {
 				found = true;
@@ -71,12 +70,53 @@ public class Spider extends Piece {
 	 * this path, We must try all the paths.
 	 */
 	private boolean findPlace(int thisX, int thisY, int xFinal, int yFinal, int toMove, Direction lastDirection) {
-
-		if (toMove == 0)
-			return false;
-
-		// TODO
-		return true;
+		boolean first = false;
+		if (toMove == 3)
+			first = true;
+		
+		toMove -= 1;
+		if(toMove == 1) {
+			for (Direction d : Direction.values()) {
+				Point p = Board.getNeighbourPoint(getX(), getY(), d);
+				if(game.getBoard().getPiece(p.x, p.x) == this) return false;
+			}
+			
+		}
+		if(toMove == 0 && thisX == xFinal && thisY == yFinal) return true;
+		Direction notDirection = null;
+		switch (lastDirection) {
+		case N:
+			notDirection = Direction.S;
+			break;
+		case NE: 
+			notDirection = Direction.SO;
+			break;
+		case NO:
+			notDirection = Direction.SE;
+			break;
+		case S:
+			notDirection = Direction.N;
+			break;
+		case SE: 
+			notDirection = Direction.NO;
+			break;
+		case SO:
+			notDirection = Direction.NE;
+			break;
+		}
+		if(game.getBoard().getPiece(thisX, thisY) == null && toMove > 0 && game.canPhysicallyMoveTo(thisX, thisY, notDirection)) {
+			if(first) notDirection = null;
+			for(Direction d : Direction.values()){
+				if(d != notDirection) {
+					Point p = Board.getNeighbourPoint(thisX, thisY, d);
+					if(p != null && game.getBoard().getPiece(p.x, p.y) == null && game.canPhysicallyMoveTo(thisX, thisY, d) && game.getBoard().justOneHive(p.x, p.y)) {
+						if(findPlace(p.x, p.y, xFinal, yFinal, toMove, d)) return true;
+					}
+				}
+			}
+			
+		}
+		return false;
 	}
 
 }

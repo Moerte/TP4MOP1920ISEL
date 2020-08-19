@@ -31,15 +31,18 @@ public class Grasshopper extends Piece {
 			game.setStatusInfo("Invalid move - the destiny must be empty");
 			return false;
 		}
-
-		Direction d = getDirection(getX(), getY(), x, y);
-		Point p = Board.getNeighbourPoint(getX(), getY(), d);
-		if(p == null) {
-			return false;
+		boolean found = false;
+		for (Direction d : Direction.values()) {
+			Point p = Board.getNeighbourPoint(getX(), getY(), d);
+			if(game.getBoard().getPiece(p.x, p.y) != null) {
+				if(findPlace(getX(), getY(), x, y, d)) {
+					found = true;
+					break;
+				}
+			}
 		}
-		
-		Piece piece = game.getBoard().getPiece((int)p.getX(), (int)p.getY());
-		if(piece == null) {
+		if(!found) {
+			game.setStatusInfo("OPS! Invalid move - The Grasshopper can't movet to that position");
 			return false;
 		}
 
@@ -53,5 +56,23 @@ public class Grasshopper extends Piece {
 			game.moveUnconditional(this, x, y);
 		}
 		return moved;
+	}
+	
+	/**
+	 * TODO Mudar esta descrição e ver a função getNeighbourPoint porque devolve double
+	 * Find if current Spider can move in 3 steps to the final position. For each
+	 * step it decreases the value toMove. If it is zero that means and is not the
+	 * destiny, that means that the Spider doesn't arrived at the destination by
+	 * this path, We must try all the paths.
+	 */
+	private boolean findPlace(int thisX, int thisY, int xFinal, int yFinal, Direction d) {
+		if(Board.getNeighbourPoint(thisX, thisY, d) == null) return false;
+		
+		if(game.getBoard().getPiece(thisX, thisY) == null) {
+			if(thisX == xFinal && thisY == yFinal) return true;
+			else return false;
+		}
+		if(findPlace((int)Board.getNeighbourPoint(thisX, thisY, d).x, Board.getNeighbourPoint(thisX, thisY, d).y, xFinal, yFinal, d)) return true;
+		return false;
 	}
 }
