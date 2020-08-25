@@ -104,6 +104,10 @@ public class Game extends JFrame {
 	private JEditorPane htmlPane;
 	private JSplitPane splitPane;
 	private URL referenceURL;
+	
+	private HighscoreManager highScore; 
+	private ImageIcon iconImg, iconMedium,
+					leafIcon, leafIconPiece;
 
 	/**
 	 * methods =============================================
@@ -134,18 +138,26 @@ public class Game extends JFrame {
 		int size = 16;
 		this.fontCurrentPlayer = new Font(fontType,Font.PLAIN, size);
 		this.fontPieces = new Font(fontType, Font.BOLD, size);
+		this.iconImg = new ImageIcon(this.getClass().getResource("images/logo/hiveLogo2.png"));
+		this.iconMedium = new ImageIcon(this.getClass().getResource("images/icon/hiveIconMedium.png"));
+		this.leafIcon = new ImageIcon(this.getClass().getResource("images/icon/hiveIconSmall.png"));
+		this.leafIconPiece = new ImageIcon(this.getClass().getResource("images/icon/queenbeenIcon.png"));
 	}
 
 	/**
 	 * the JFrame initialization method
 	 */
 	private void init() {
+		highScore = new HighscoreManager();
 		setTitle("Hive Game");
 		setSize(1000, 700);
 		loadResources();
 		this.isPlayerAToPlay = true;
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setLayout(new CenterLayout());
+		setLocationRelativeTo(null);
+		setIconImage(iconImg.getImage());
+		
 
 		playerAData = new PlayerData(this, true);
 		JPanel panelA = new JPanel();
@@ -157,9 +169,6 @@ public class Game extends JFrame {
 		panelB = playerBData.getSidePanel();
 		add(panelB, BorderLayout.EAST);
 		
-		setLocationRelativeTo(null);
-		ImageIcon img = new ImageIcon(this.getClass().getResource("images/logo/hiveLogo2.png"));
-		setIconImage(img.getImage());
 		board = new Board(this, fontPieces);
 		add(board, BorderLayout.CENTER);
 
@@ -175,9 +184,8 @@ public class Game extends JFrame {
 					startAgain();
 					break;
 				case "start_again":
-					ImageIcon iconStartAgain = new ImageIcon(this.getClass().getResource("images/icon/hiveIconMedium.png"));
 					int n = JOptionPane.showConfirmDialog(that, "Are you sure about your decision?",
-							"Restart Game Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, iconStartAgain);
+							"Restart Game Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, iconMedium);
 					if (n == JOptionPane.YES_OPTION) {
 						enableControlButtons(true);
 						startAgain();
@@ -281,7 +289,7 @@ public class Game extends JFrame {
 		currentPlayerData = playerAData;
 
 		// Main Label
-		mainLabel = new JLabel(img);
+		mainLabel = new JLabel(iconImg);
 		lb_message.setText("Current Player -> " + "Player A");
 		mainLabel.setOpaque(true);
 		mainLabel.setBackground(Color.LIGHT_GRAY);
@@ -364,30 +372,20 @@ public class Game extends JFrame {
 	 * activate About window
 	 */
 	private void about() {
-		ImageIcon icon = new ImageIcon(this.getClass().getResource("images/pictures/Coisas.jpeg"));
-
 		String content = null;
 		try {
 			content = new String(Files.readAllBytes(Paths.get("src/tps/tp4/about.txt")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		JOptionPane.showMessageDialog(this, content, "About information.", JOptionPane.INFORMATION_MESSAGE, icon);
+		JOptionPane.showMessageDialog(this, content, "About information.", JOptionPane.INFORMATION_MESSAGE, iconImg);
 	}
 
 	/**
 	 * activate View scores window
 	 */
 	private void viewScores() {
-		ImageIcon iconScore = new ImageIcon(this.getClass().getResource("images/icon/hiveIconMedium.png"));
-		// TODO Adicionar as pontuações (LER DOCOMENTO)
-		String content = null;
-		try {
-			content = new String(Files.readAllBytes(Paths.get("src/tps/tp4/scores.txt")));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		JOptionPane.showMessageDialog(this, content, "Top Scores", JOptionPane.INFORMATION_MESSAGE, iconScore);
+		JOptionPane.showMessageDialog(this, highScore.getHighscoreString(), "Top Scores", JOptionPane.INFORMATION_MESSAGE, iconMedium);
 	}
 
 	/**
@@ -403,8 +401,6 @@ public class Game extends JFrame {
 		tree = new JTree(top);
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
-		ImageIcon leafIcon = new ImageIcon(this.getClass().getResource("images/icon/hiveIconSmall.png"));
-		ImageIcon leafIconPiece = new ImageIcon(this.getClass().getResource("images/icon/queenbeenIcon.png"));
 
 		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
 		renderer.setLeafIcon(leafIconPiece);
@@ -454,8 +450,7 @@ public class Game extends JFrame {
 		splitPane.setDividerLocation(100);
 
 		splitPane.setPreferredSize(new Dimension(500, 300));
-		ImageIcon iconRules = new ImageIcon(this.getClass().getResource("images/icon/hiveIconMedium.png"));
-		JOptionPane.showMessageDialog(this, splitPane, "Rules", JOptionPane.INFORMATION_MESSAGE, iconRules);
+		JOptionPane.showMessageDialog(this, splitPane, "Rules", JOptionPane.INFORMATION_MESSAGE, iconMedium);
 	}
 
 	private void createNodes(DefaultMutableTreeNode top) {
@@ -697,9 +692,9 @@ public class Game extends JFrame {
 	}
 
 	private void giveUp() {
-		ImageIcon iconGiveUp = new ImageIcon(this.getClass().getResource("images/icon/hiveIconMedium.png"));
+
 		int n = JOptionPane.showConfirmDialog(this, "Are you that chicken?", "Give Up Confirmation",
-				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, iconGiveUp);
+				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, iconMedium);
 		if (n == JOptionPane.YES_OPTION) {
 			this.endOfGame = true;
 
@@ -968,8 +963,7 @@ public class Game extends JFrame {
 		}else {
 			if(checkFinishGame(true) && checkFinishGame(false)) {
 				lb_message.setText("It's a Draw!!!");
-				ImageIcon iconFinish = new ImageIcon(this.getClass().getResource("images/icon/hiveIconMedium.png"));
-				JOptionPane.showMessageDialog(this, "It's a Draw!!", "DRAW!", JOptionPane.INFORMATION_MESSAGE, iconFinish);
+				JOptionPane.showMessageDialog(this, "It's a Draw!!", "DRAW!", JOptionPane.INFORMATION_MESSAGE, iconMedium);
 				return true;
 			}else if(checkFinishGame(true)) {
 				playerBData.setPlayerWon(true);
@@ -1019,10 +1013,21 @@ public class Game extends JFrame {
 	 */
 	private void doFinishGameActions() {
 		boolean checkWinner = playerAData.playerWon();
-		ImageIcon iconFinish = new ImageIcon(this.getClass().getResource("images/icon/hiveIconMedium.png"));
-		JOptionPane.showMessageDialog(this, "Congratulations Player " + (checkWinner ? "A" : "B"), "Winner Panel",
-				JOptionPane.INFORMATION_MESSAGE, iconFinish);
-		lb_message.setText("Winner: Player " + (checkWinner ? "A" : "B"));
+		String winningPlayer = checkWinner ? "A" : "B";
+		int n = JOptionPane.showConfirmDialog(this, "Congratulations Player " + winningPlayer + "\n Do you want to enter your name?", "Winner Panel",
+				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, iconMedium);
+		
+		if (n == JOptionPane.YES_OPTION) {
+			String s = (String) JOptionPane.showInputDialog(this,
+					"Please enter your name", "Player Name",
+					JOptionPane.PLAIN_MESSAGE, iconMedium, null, null);
+			if(s != null) {
+				highScore.addScore(s, (checkWinner ? playerAData.getNumberOfMoves() : playerBData.getNumberOfMoves()));
+			}
+		} 
+		
+		viewScores();
+		lb_message.setText("Winner: Player " + winningPlayer);
 		enableControlButtons(false);
 		bn_newGame.setVisible(true);
 		bn_newGame.setEnabled(true);
