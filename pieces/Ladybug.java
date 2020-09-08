@@ -1,4 +1,4 @@
-package tps.tp4.pieces;
+ package tps.tp4.pieces;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -20,34 +20,38 @@ public class Ladybug extends Piece {
 		super("Ladybug", color, game, isFromPlayerA);
 	}
 
-	/**
-	 * Move this piece to x,y if doesn't violate the rules.
-	 * 
-	 * The Beetle can move only one step and be placed on top on another piece(s).
-	 * Should not violate the one hive rule.
-	 */
+	
 	public boolean moveTo(int x, int y) {
-		if (game.getBoard().getPiece(x, y) != null) {
-			game.setStatusInfo("Invalid move - the destiny must be empty");
-			return false;
-		}
-
-		// execute search for all the coordinates, with limit of 3 steps
-		boolean found = false;
-		for (Direction d : Direction.values()) {
-			Point p = Board.getNeighbourPoint(getX(), getY(), d);
+		
+		boolean reachable = false;
+		
+		for (Direction direc : Direction.values()) {
+			Point p = Board.getNeighbourPoint(getX(), getY(), direc);
 			if (p == null)
 				continue;
 
-			if (findPlace(p.x, p.y, x, y, 3)) {
-				found = true;
+			if (toGo(p.x, p.y, x, y, 2, direc)) { //ladybug can basically move up to 2 steps in any direction
+				reachable = true;
 				break;
 			}
 		}
-
-		if (!found) {
-			game.setStatusInfo("Invalid move - the destiny can't be reached in 3 valid steps");
-			game.moveUnconditional(this, getX(), getY());
+		/*
+		for (Direction direc : Direction.values()) {
+			Point p = Board.getNeighbourPoint(getX(), getY(), direc);
+			if (p == null)
+				continue;
+			if (x == p.x && y > p.y + 3) {
+				reachable = false;
+			}
+			else {
+				toGo(p.x, p.y, x, y, 3, direc); { //ladybug can basically move up to 2 steps in any direction
+				reachable = true;	
+				} 
+				break;
+			}
+		}
+		*/
+		if (!reachable) {
 			return false;
 		}
 
@@ -62,38 +66,27 @@ public class Ladybug extends Piece {
 		return moved;
 	}
 
-	/**
-	 * TODO Mudar esta descrição
-	 * Find if current Spider can move in 3 steps to the final position. For each
-	 * step it decreases the value toMove. If it is zero that means and is not the
-	 * destiny, that means that the Spider doesn't arrived at the destination by
-	 * this path, We must try all the paths.
-	 */
-	private boolean findPlace(int thisX, int thisY, int xFinal, int yFinal, int toMove) {
+	
+	private boolean toGo(int x, int y, int endX, int endY, int move, Direction lastDirec) {
+		boolean a = false;
+		if(move == 2) {
+			a = true;
+		}
+		move -= 1;
+		
+		if(move == 0 && x == endX && y == endY) return true;
+		
+		Direction direc2 = null;
 
-		if (toMove == 3 && game.getBoard().getPiece(thisX, thisY) == null)
-			return false;
-
-		toMove -= 1;
-		if (toMove == 0 && thisX == xFinal && thisY == yFinal)
-			return true;
-		if (toMove == 2) {
-			for (Direction d : Direction.values()) {
-				Point p = Board.getNeighbourPoint(getX(), getY(), d);
-				if (game.getBoard().getPiece(p.x, p.y) != null && game.getBoard().getPiece(p.x, p.y) != this
-						&& game.getBoard().justOneHive(p.x, p.y)) {
-					if (findPlace(p.x, p.y, xFinal, yFinal, toMove))
-						return true;
+		if(game.getBoard().getPiece(x, y) == null && move > 0 && game.canPhysicallyMoveTo(endX, endY, lastDirec)) {
+			for(Direction direc3 : Direction.values()){
+				if(direc3 != direc2) {
+					Point p2 = Board.getNeighbourPoint(x, y, direc3);
+					if(p2 != null && game.getBoard().getPiece(p2.x, p2.y) == null && game.canPhysicallyMoveTo(x, y, direc3) && game.getBoard().justOneHive(p2.x, p2.y)) {
+						if(toGo(p2.x, p2.y, endX, endY, move, direc3)) return true;
+					}
 				}
-			}
-		} else if (toMove == 1) {
-			for (Direction d : Direction.values()) {
-				Point p = Board.getNeighbourPoint(getX(), getY(), d);
-				if (game.getBoard().getPiece(p.x, p.y) != null && game.getBoard().justOneHive(p.x, p.y)) {
-					if (findPlace(p.x, p.y, xFinal, yFinal, toMove))
-						return true;
-				}
-			}
+			}	
 		}
 		return false;
 	}

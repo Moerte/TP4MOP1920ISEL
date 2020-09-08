@@ -28,27 +28,21 @@ public class Spider extends Piece {
 	 */
 	public boolean moveTo(int x, int y) {
 
-		if (game.getBoard().getPiece(x, y) != null) {
-			game.setStatusInfo("Invalid move - the destiny must be empty");
-			return false;
-		}
-
 		// execute search for all the coordinates, with limit of 3 steps
-		boolean found = false;
+		boolean reachable = false;
 		
-		for (Direction d : Direction.values()) {
-			Point p = Board.getNeighbourPoint(getX(), getY(), d);
+		for (Direction direc : Direction.values()) {
+			Point p = Board.getNeighbourPoint(getX(), getY(), direc);
 			if (p == null)
 				continue;
 
-			if (findPlace(p.x, p.y, x, y, 3, d)) {
-				found = true;
+			if (toGo(p.x, p.y, x, y, 3, direc)) {
+				reachable = true;
 				break;
 			}
 		}
 
-		if (!found) {
-			game.setStatusInfo("Invalid move - the destiny can't be reached in 3 valid steps");
+		if (!reachable) {
 			return false;
 		}
 
@@ -69,54 +63,53 @@ public class Spider extends Piece {
 	 * destiny, that means that the Spider doesn't arrived at the destination by
 	 * this path, We must try all the paths.
 	 */
-	private boolean findPlace(int thisX, int thisY, int xFinal, int yFinal, int toMove, Direction lastDirection) {
-		boolean first = false;
-		if (toMove == 3)
-			first = true;
-		
-		toMove -= 1;
-		if(toMove == 1) {
-			for (Direction d : Direction.values()) {
-				Point p = Board.getNeighbourPoint(getX(), getY(), d);
-				if(game.getBoard().getPiece(p.x, p.x) == this) return false;
+	private boolean toGo(int x, int y, int endX, int endY, int move, Direction lastDirec) {
+		boolean a = false;
+		if (move == 3) {
+			a = true;
+		}		
+		move -= 1;
+		if(move == 1) {
+			for (Direction direc1 : Direction.values()) {
+				Point p1 = Board.getNeighbourPoint(getX(), getY(), direc1);
+				if(game.getBoard().getPiece(p1.x, p1.x) == this) return false;
 			}
 			
 		}
-		if(toMove == 0 && thisX == xFinal && thisY == yFinal) return true;
-		Direction notDirection = null;
-		switch (lastDirection) {
+		if(move == 0 && x == endX && y == endY) return true;
+		
+		Direction direc2 = null;
+		switch (lastDirec) {
 		case N:
-			notDirection = Direction.S;
-			break;
-		case NE: 
-			notDirection = Direction.SO;
-			break;
-		case NO:
-			notDirection = Direction.SE;
+			direc2 = Direction.S;
 			break;
 		case S:
-			notDirection = Direction.N;
+			direc2 = Direction.N;
+			break;
+		case NE: 
+			direc2 = Direction.SO;
 			break;
 		case SE: 
-			notDirection = Direction.NO;
+			direc2 = Direction.NO;
+			break;
+		case NO:
+			direc2 = Direction.SE;
 			break;
 		case SO:
-			notDirection = Direction.NE;
+			direc2 = Direction.NE;
 			break;
 		}
-		if(game.getBoard().getPiece(thisX, thisY) == null && toMove > 0 && game.canPhysicallyMoveTo(thisX, thisY, notDirection)) {
-			if(first) notDirection = null;
-			for(Direction d : Direction.values()){
-				if(d != notDirection) {
-					Point p = Board.getNeighbourPoint(thisX, thisY, d);
-					if(p != null && game.getBoard().getPiece(p.x, p.y) == null && game.canPhysicallyMoveTo(thisX, thisY, d) && game.getBoard().justOneHive(p.x, p.y)) {
-						if(findPlace(p.x, p.y, xFinal, yFinal, toMove, d)) return true;
+		if(game.getBoard().getPiece(x, y) == null && move > 0 && game.canPhysicallyMoveTo(endX, endY, lastDirec)) {
+			if(a) direc2 = null;
+			for(Direction direc3 : Direction.values()){
+				if(direc3 != direc2) {
+					Point p2 = Board.getNeighbourPoint(x, y, direc3);
+					if(p2 != null && game.getBoard().getPiece(p2.x, p2.y) == null && game.canPhysicallyMoveTo(x, y, direc3) && game.getBoard().justOneHive(p2.x, p2.y)) {
+						if(toGo(p2.x, p2.y, endX, endY, move, direc3)) return true;
 					}
 				}
-			}
-			
+			}	
 		}
 		return false;
 	}
-
 }

@@ -2,10 +2,10 @@ package tps.tp4.pieces;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 
 import tps.tp4.Board;
-import tps.tp4.BoardPlace;
+//import tps.tp4.BoardPlace;
 import tps.tp4.Game;
 import tps.tp4.Game.Direction;
 
@@ -30,13 +30,24 @@ public class Ant extends Piece {
 	 */
 	public boolean moveTo(int x, int y) {
 
-		if (game.getBoard().getPiece(x, y) != null) {
-			game.setStatusInfo("Invalid move - the destiny must be empty");
-			return false;
+		for (Direction direc : Direction.values()) {
+			Point p = Board.getNeighbourPoint(getX(), getY(), direc);
+			if (p == null) {
+				continue;
+			}
+		
 		}
+		boolean moved = moveWithOnehiveRuleChecked(x, y);
+
+		if (moved) {
+			System.out.println("Piece " + this + " with (x,y) of (" + getX() + ", " + getY() + ") moved to (" + x + ", "
+					+ y + ")");
+			game.moveUnconditional(this, x, y);
+		}
+		return moved;
 
 		// execute search for all the coordinates, with limit of 3 steps
-		boolean found = false;
+		/*boolean found = false;
 		ArrayList<BoardPlace> pathList = new ArrayList<BoardPlace>();
 		pathList.add(game.getBoard().getBoardPlace(getX(), getY()));
 		if (findPlace(getX(), getY(), x, y, pathList)) {
@@ -55,9 +66,9 @@ public class Ant extends Piece {
 		if (moved) {
 			System.out.println("Piece " + this + " with (x,y) of (" + getX() + ", " + getY() + ") moved to (" + x + ", "
 					+ y + ")");
-
+			game.moveUnconditional(this, x, y);
 		}
-		return moved;
+		return moved;*/
 	}
 
 	/**
@@ -67,15 +78,14 @@ public class Ant extends Piece {
 	 * one is already there, that means that is a loop, so it must abandon that
 	 * path.
 	 */
-	private boolean findPlace(int nextX, int nextY, int xFinal, int yFinal, ArrayList<BoardPlace> pathList) {
+	/*private boolean findPlace(int nextX, int nextY, int xFinal, int yFinal, ArrayList<BoardPlace> pathList) {
 		if (nextX == xFinal && nextY == yFinal)
 			return true;
 
 		if (nextX != xFinal && nextY != yFinal) {
 			for (Direction d : Direction.values()) {
 				Point p = Board.getNeighbourPoint(getX(), getY(), d);
-				if (game.getBoard().getPiece(p.x, p.y) != null
-						&& !(pathList.contains(game.getBoard().getBoardPlace(p.x, p.y)))) {
+				if (game.getBoard().getPiece(p.x, p.y) != null && !(pathList.contains(game.getBoard().getBoardPlace(p.x, p.y)))) {
 					if (game.canPhysicallyMoveTo(nextX, nextY, d)) {
 						pathList.add(game.getBoard().getBoardPlace(p.x, p.y));
 						if (findPlace(p.x, p.y, xFinal, yFinal, pathList))
@@ -86,5 +96,5 @@ public class Ant extends Piece {
 		}
 
 		return false;
-	}
+	}*/
 }

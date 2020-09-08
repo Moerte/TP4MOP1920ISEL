@@ -31,8 +31,8 @@ public class Beetle extends Piece {
 	public boolean moveTo(int x, int y) {
 		boolean reachable = false;
 		// execute search for all the coordinates
-		for (Direction d : Direction.values()) {
-			Point p = Board.getNeighbourPoint(getX(), getY(), d);
+		for (Direction direc : Direction.values()) {
+			Point p = Board.getNeighbourPoint(getX(), getY(), direc);
 			if (p == null)
 				continue;
 			if (p.getX() == x && p.getY() == y) {
@@ -48,7 +48,7 @@ public class Beetle extends Piece {
 			}
 		}
 		// move if one hive rule checked
-		boolean moved = moveWithOnehiveRuleChecked(x, y);
+		boolean moved = moveOneCheckedStep(x, y);
 		if (moved) {
 			System.out.println("Piece " + this + " with (x,y) of (" + getX() + ", " + getY() + ") moved to (" + x + ", "
 					+ y + ")");
