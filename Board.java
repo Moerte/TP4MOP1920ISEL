@@ -275,7 +275,6 @@ public class Board extends JPanel {
 		int nPieces = playerAData.getNumberOfPiecesOnBoard()+ playerBData.getNumberOfPiecesOnBoard();
 		List<Piece> l = new ArrayList<Piece>();
 		this.getPiecesFromThisPoint(x, y, l);
-		// TODO Rever a questao do beetle poder subir para cima de outras peças
 		return l.size() == nPieces;
 	}
 	
@@ -284,9 +283,10 @@ public class Board extends JPanel {
 	 * the List received.
 	 */
 	private void getPiecesFromThisPoint(int x, int y, List<Piece> pieces) {
-		Piece p = board[x][y].getPiece();
-		if(p != null)
+		ArrayList<Piece> pieceList = board[x][y].getList();
+		for (Piece p : pieceList) {
 			pieces.add(p);
+		}
 		for(Direction d : Direction.values()) {
 			Point point = getNeighbourPoint(x, y, d);
 			Piece p2 = board[point.x][point.y].getPiece();

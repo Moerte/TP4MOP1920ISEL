@@ -82,6 +82,14 @@ public class BoardPlace {
 		selPolygon.addPoint(baseX, baseY + Piece.DIMPIECE / 2);
 
 	}
+	
+	public ArrayList<Piece> getList(){
+		return pieces;
+	}
+	
+	public int getNumPieces() {
+		return pieces.size();
+	}
 
 	/**
 	 * get the tail piece - the others are not accessible

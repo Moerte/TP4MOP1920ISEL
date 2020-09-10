@@ -108,6 +108,8 @@ public class Game extends JFrame {
 	private HighscoreManager highScore; 
 	private ImageIcon iconImg, iconMedium,
 					leafIcon, leafIconPiece;
+	
+	private Piece lastMovedPiece;
 
 	/**
 	 * methods =============================================
@@ -157,6 +159,8 @@ public class Game extends JFrame {
 		setLayout(new CenterLayout());
 		setLocationRelativeTo(null);
 		setIconImage(iconImg.getImage());
+		
+		lastMovedPiece = null;
 		
 
 		playerAData = new PlayerData(this, true);
@@ -590,6 +594,10 @@ public class Game extends JFrame {
 	public Board getBoard() {
 		return board;
 	}
+	
+	public Piece getLastMoved() {
+		return lastMovedPiece;
+	}
 
 	/**
 	 * get player data
@@ -764,6 +772,7 @@ public class Game extends JFrame {
 				}
 				int pastX = currentPiece.getX(), pastY = currentPiece.getY();
 				if (currentPiece.moveTo(x, y) && currentPlayerData.isQueenBeeAlreadyOnBoard()) {
+					lastMovedPiece = currentPiece;
 					board.getBoardPlace(pastX, pastY).setSelected(false);
 					board.repaint();
 					if(checkFinishGame(isPlayerAToPlay)) {

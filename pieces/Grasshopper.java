@@ -46,7 +46,10 @@ public class Grasshopper extends Piece {
 				
 			}
 		}	
-		if (!reachable)	return false;
+		if (!reachable) {
+			game.setStatusInfo("OPS! Invalid move - The "+this.getName()+" can't move to that position");
+			return false;
+		}
 		
 		/*boolean found = false;
 		for (Direction d : Direction.values()) {
@@ -68,6 +71,7 @@ public class Grasshopper extends Piece {
 		boolean moved = moveWithOnehiveRuleChecked(x, y);
 
 		if (moved) {
+			game.setStatusInfo("The Piece "+ this.getName()+" moved!");
 			System.out.println("Piece " + this + " with (x,y) of (" + getX() + ", " + getY() + ") moved to (" + x + ", " + y + ")");
 			game.moveUnconditional(this, x, y);
 			return true;
