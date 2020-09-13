@@ -12,14 +12,13 @@ import tps.tp4.Game.Direction;
  */
 public class PillBug extends Piece {
 	final static private Color color = Color.cyan;
-	private Piece currentHolding;
+	private Piece currentHolding = null;
 
 	/**
 	 * constructor
 	 */
 	public PillBug(Game game, boolean isFromPlayerA) {
 		super("PillBug", color, game, isFromPlayerA);
-		currentHolding = null;
 	}
 
 	/**
@@ -29,6 +28,7 @@ public class PillBug extends Piece {
 	 */
 	public boolean moveTo(int x, int y) {
 		boolean reachable = false;
+		int posX = getX(), posY = getY();
 		if (currentHolding == null) {
 			Piece piece = game.getBoard().getPiece(x, y);
 			if (piece == null) {
@@ -56,16 +56,18 @@ public class PillBug extends Piece {
 				return moved;
 			} else {
 				for (Direction direc : Direction.values()) {
-					Point p = Board.getNeighbourPoint(getX(), getY(), direc);
+					Point p = Board.getNeighbourPoint(posX, posY, direc);
 					if (p == null)
 						continue;
 					boolean moved = moveWithOnehiveRuleChecked(x, y);
-					
-					if (x == p.x && y == p.y && !game.getLastMoved().equals(piece) && moved) {
-						if (game.getBoard().getBoardPlace(x, y).getNumPieces() > 1)
+
+					if (/*x == p.x && y == p.y &&*/(game.getLastMoved() == null || !game.getLastMoved().equals(piece)) && moved) {
+						System.out.println("Moved: "+moved + " And: Num Pieces: "+ game.getBoard().getBoardPlace(x, y).getNumPieces());
+						if (game.getBoard().getBoardPlace(x, y).getNumPieces() > 2)
 							return false;
-						currentHolding = game.getBoard().getPiece(x, y);
-						pickupPiece(currentHolding);
+						currentHolding = piece; 
+						System.out.println("Teste " +currentHolding);
+						pickupPiece(currentHolding, posX, posY);
 						return false;
 					}
 				}
@@ -91,9 +93,9 @@ public class PillBug extends Piece {
 		return false;
 	}
 
-	private void pickupPiece(Piece holdingPiece) {
+	private void pickupPiece(Piece holdingPiece, int pX, int pY) {
 		game.getBoard().remPiece(holdingPiece);
-		game.getBoard().addPiece(holdingPiece, this.getX(), this.getY());
+		game.getBoard().addPiece(holdingPiece, pX, pY);
 		game.getBoard().repaint();
 
 	}

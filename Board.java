@@ -63,30 +63,28 @@ public class Board extends JPanel {
 		for (int y = 0; y < DIMY; y++) {
 			for (int x = 0; x < DIMX; x++) {
 				board[x][y] = new BoardPlace(this, x, y);
-				
+
 			}
 		}
 		MouseListener ml = new MouseListener() {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				
+
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				
+
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				
 
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				
 
 			}
 
@@ -107,8 +105,7 @@ public class Board extends JPanel {
 					break;
 				}
 			}
-			
-			
+
 		};
 		addMouseListener(ml);
 
@@ -122,8 +119,10 @@ public class Board extends JPanel {
 	private void clickOnBoard(int xPix, int yPix) {
 		for (int i = 0; i < board.length; i++) {
 			for (int j = 0; j < board[i].length; j++) {
-				if(board[i][j].isInsideBoardPlace(xPix, yPix))
+				if (board[i][j].isInsideBoardPlace(xPix, yPix)) {
 					game.clickOnBoard(i, j);
+					return;
+				}
 			}
 		}
 
@@ -231,8 +230,10 @@ public class Board extends JPanel {
 	 * returns the (tail) piece on board[x][y]
 	 */
 	public Piece getPiece(int x, int y) {
-		if(isInside(x, y))return board[x][y].getPiece();
-		else return null;
+		if (isInside(x, y))
+			return board[x][y].getPiece();
+		else
+			return null;
 	}
 
 	/**
@@ -250,8 +251,10 @@ public class Board extends JPanel {
 	 */
 	public void addPiece(Piece p, int x, int y) {
 		board[x][y].addPiece(p);
-		if(p.isFromPlayerA()) playerAData.incNumberOfPiecesOnBoard();
-		else playerBData.incNumberOfPiecesOnBoard();
+		if (p.isFromPlayerA())
+			playerAData.incNumberOfPiecesOnBoard();
+		else
+			playerBData.incNumberOfPiecesOnBoard();
 		p.setXY(x, y);
 	}
 
@@ -261,8 +264,10 @@ public class Board extends JPanel {
 	 */
 	public boolean remPiece(Piece p) {
 		int x = p.getX(), y = p.getY();
-		if(p.isFromPlayerA()) playerAData.decNumberOfPiecesOnBoard();
-		else playerBData.decNumberOfPiecesOnBoard();
+		if (p.isFromPlayerA())
+			playerAData.decNumberOfPiecesOnBoard();
+		else
+			playerBData.decNumberOfPiecesOnBoard();
 		return board[x][y].remPiece(p);
 	}
 
@@ -272,12 +277,13 @@ public class Board extends JPanel {
 	 * pieces.
 	 */
 	public boolean justOneHive(int x, int y) {
-		int nPieces = playerAData.getNumberOfPiecesOnBoard()+ playerBData.getNumberOfPiecesOnBoard();
+		int nPieces = playerAData.getNumberOfPiecesOnBoard() + playerBData.getNumberOfPiecesOnBoard();
 		List<Piece> l = new ArrayList<Piece>();
 		this.getPiecesFromThisPoint(x, y, l);
+		System.out.println("Teste JustOneHive: "+(l.size() == nPieces)+ " l.size => " + l.size() + " nPecas => "+ (nPieces));
 		return l.size() == nPieces;
 	}
-	
+
 	/**
 	 * Get all the pieces that are connected with the x, y received, and put them on
 	 * the List received.
@@ -287,13 +293,13 @@ public class Board extends JPanel {
 		for (Piece p : pieceList) {
 			pieces.add(p);
 		}
-		for(Direction d : Direction.values()) {
+		for (Direction d : Direction.values()) {
 			Point point = getNeighbourPoint(x, y, d);
 			Piece p2 = board[point.x][point.y].getPiece();
-			if(p2 != null && !pieces.contains(p2)) {
+			if (p2 != null && !pieces.contains(p2)) {
 				getPiecesFromThisPoint(point.x, point.y, pieces);
 			}
-		}	
+		}
 	}
 
 	/**
