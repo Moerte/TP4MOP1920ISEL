@@ -971,8 +971,8 @@ public class Game extends JFrame {
 			
 		}else {
 			if(checkFinishGame(true) && checkFinishGame(false)) {
-				lb_message.setText("It's a Draw!!!");
-				JOptionPane.showMessageDialog(this, "It's a Draw!!", "DRAW!", JOptionPane.INFORMATION_MESSAGE, iconMedium);
+				lb_message.setText("Oh my God!! It's a Draw!!!");
+				JOptionPane.showMessageDialog(this, "Oh my God!! It's a Draw!!", "DRAW!", JOptionPane.INFORMATION_MESSAGE, iconMedium);
 				return true;
 			}else if(checkFinishGame(true)) {
 				playerBData.setPlayerWon(true);
@@ -1030,9 +1030,8 @@ public class Game extends JFrame {
 			String s = (String) JOptionPane.showInputDialog(this,
 					"Please enter your name", "Player Name",
 					JOptionPane.PLAIN_MESSAGE, iconMedium, null, null);
-			if(s != null) {
-				highScore.addScore(s, (checkWinner ? playerAData.getNumberOfMoves() : playerBData.getNumberOfMoves()));
-			}
+			if(s != null) highScore.addScore(s, (checkWinner ? playerAData.getNumberOfMoves() : playerBData.getNumberOfMoves()));
+			else highScore.addScore("Unknown", (checkWinner ? playerAData.getNumberOfMoves() : playerBData.getNumberOfMoves()));
 		} 
 		
 		viewScores();
