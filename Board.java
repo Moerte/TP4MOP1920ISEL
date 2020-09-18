@@ -290,7 +290,10 @@ public class Board extends JPanel {
 	 */
 	private void getPiecesFromThisPoint(int x, int y, List<Piece> pieces) {
 		ArrayList<Piece> pieceList = board[x][y].getList();
+		ArrayList<Piece> pieceCordinates;
+		
 		for (Piece p : pieceList) {
+			 
 			pieces.add(p);
 		}
 		for (Direction d : Direction.values()) {
