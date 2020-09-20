@@ -104,11 +104,11 @@ public class Game extends JFrame {
 	private JEditorPane htmlPane;
 	private JSplitPane splitPane;
 	private URL referenceURL;
+
+	private HighscoreManager highScore;
 	
-	private HighscoreManager highScore; 
-	private ImageIcon iconImg, iconMedium,
-					leafIcon, leafIconPiece;
-	
+	private ImageIcon iconImg, iconMedium, leafIcon, leafIconPiece;
+
 	private Piece lastMovedPiece;
 
 	/**
@@ -138,7 +138,7 @@ public class Game extends JFrame {
 
 		String fontType = "Comic Sans MS";
 		int size = 16;
-		this.fontCurrentPlayer = new Font(fontType,Font.PLAIN, size);
+		this.fontCurrentPlayer = new Font(fontType, Font.PLAIN, size);
 		this.fontPieces = new Font(fontType, Font.BOLD, size);
 		this.iconImg = new ImageIcon(this.getClass().getResource("images/logo/hiveLogo2.png"));
 		this.iconMedium = new ImageIcon(this.getClass().getResource("images/icon/hiveIconMedium.png"));
@@ -159,9 +159,8 @@ public class Game extends JFrame {
 		setLayout(new CenterLayout());
 		setLocationRelativeTo(null);
 		setIconImage(iconImg.getImage());
-		
+
 		lastMovedPiece = null;
-		
 
 		playerAData = new PlayerData(this, true);
 		JPanel panelA = new JPanel();
@@ -172,7 +171,7 @@ public class Game extends JFrame {
 		JPanel panelB = new JPanel();
 		panelB = playerBData.getSidePanel();
 		add(panelB, BorderLayout.EAST);
-		
+
 		board = new Board(this, fontPieces);
 		add(board, BorderLayout.CENTER);
 
@@ -189,7 +188,8 @@ public class Game extends JFrame {
 					break;
 				case "start_again":
 					int n = JOptionPane.showConfirmDialog(that, "Are you sure about your decision?",
-							"Restart Game Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, iconMedium);
+							"Restart Game Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+							iconMedium);
 					if (n == JOptionPane.YES_OPTION) {
 						enableControlButtons(true);
 						startAgain();
@@ -389,7 +389,8 @@ public class Game extends JFrame {
 	 * activate View scores window
 	 */
 	private void viewScores() {
-		JOptionPane.showMessageDialog(this, highScore.getHighscoreString(), "Top Scores", JOptionPane.INFORMATION_MESSAGE, iconMedium);
+		JOptionPane.showMessageDialog(this, highScore.getHighscoreString(), "Top Scores",
+				JOptionPane.INFORMATION_MESSAGE, iconMedium);
 	}
 
 	/**
@@ -404,7 +405,6 @@ public class Game extends JFrame {
 		// Create a tree that allows one selection at a time.
 		tree = new JTree(top);
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-
 
 		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
 		renderer.setLeafIcon(leafIconPiece);
@@ -594,7 +594,7 @@ public class Game extends JFrame {
 	public Board getBoard() {
 		return board;
 	}
-	
+
 	public Piece getLastMoved() {
 		return lastMovedPiece;
 	}
@@ -620,7 +620,6 @@ public class Game extends JFrame {
 	private void changePlayer() {
 		if (currentPlayerData.getNumberOfMoves() == MAX_NUMBER_OF_MOVES_TO_PLACE_QUEENBEE - 1
 				&& !currentPlayerData.isQueenBeeAlreadyOnBoard()) {
-			System.out.println("You need to place the QueenBee.");
 			lb_message.setText("You need to place the QueenBee.");
 			if (!placingQueenBee)
 				return;
@@ -639,15 +638,16 @@ public class Game extends JFrame {
 			playerAData.setPlayerPanelActive(isPlayerAToPlay);
 			lb_message.setText("Current Player -> Player A");
 		}
-		if(!currentPlayerData.isQueenBeeAlreadyOnBoard()) placingQueenBee = false; 
+		if (!currentPlayerData.isQueenBeeAlreadyOnBoard())
+			placingQueenBee = false;
 		if (currentHiveLabel != null) {
 			currentHiveLabel.setToNormal();
 			currentHiveLabel = null;
 		}
-		 if(currentPiece != null) {
-			 board.getBoardPlace(currentPiece.getX(), currentPiece.getY()).setSelected(false);
-			 currentPiece = null;
-		 }
+		if (currentPiece != null) {
+			board.getBoardPlace(currentPiece.getX(), currentPiece.getY()).setSelected(false);
+			currentPiece = null;
+		}
 
 	}
 
@@ -677,13 +677,13 @@ public class Game extends JFrame {
 		currentPiece = null;
 		bn_newGame.setVisible(false);
 		bn_newGame.setEnabled(false);
-		
+
 	}
 
 	/**
-	 * TODO Fazer a descrição do metodo
+	 * Restart the Pieces label to normal state
 	 * 
-	 * @param component
+	 * @param component -> components from one player
 	 */
 	private void labelRestart(Component[] component) {
 		for (Component c : component) {
@@ -753,6 +753,7 @@ public class Game extends JFrame {
 	 * a click on the board
 	 */
 	public void clickOnBoard(int x, int y) {
+		
 		if (currentPlayerData.getNumberOfMoves() == MAX_NUMBER_OF_MOVES_TO_PLACE_QUEENBEE - 1
 				&& !currentPlayerData.isQueenBeeAlreadyOnBoard()) {
 			lb_message.setText("You need to place the QueenBee.");
@@ -765,19 +766,18 @@ public class Game extends JFrame {
 				return;
 			}
 			if (currentPiece != null) {
-				if(currentPiece == p) {
+				if (currentPiece.equals(p)) {
 					board.getBoardPlace(x, y).setSelected(false);
 					currentPiece = null;
 					return;
 				}
 				int pastX = currentPiece.getX(), pastY = currentPiece.getY();
-				if (currentPiece.moveTo(x, y) && currentPlayerData.isQueenBeeAlreadyOnBoard()) {
+				if (currentPlayerData.isQueenBeeAlreadyOnBoard() && currentPiece.moveTo(x, y)) {
 					lastMovedPiece = currentPiece;
 					board.getBoardPlace(pastX, pastY).setSelected(false);
 					board.repaint();
-					if(checkFinishGame(isPlayerAToPlay)) {
+					if (checkFinishGame()) {
 						doFinishGameActions();
-						//return;
 					}
 					changePlayer();
 					return;
@@ -785,7 +785,7 @@ public class Game extends JFrame {
 				lb_message.setText("Invalid movement!");
 				return;
 			} else {
-				if(!isPlayerAToPlay && p.isFromPlayerA() || isPlayerAToPlay && !p.isFromPlayerA()) {
+				if (!isPlayerAToPlay && p.isFromPlayerA() || isPlayerAToPlay && !p.isFromPlayerA()) {
 					return;
 				}
 				currentPiece = p;
@@ -831,16 +831,16 @@ public class Game extends JFrame {
 				}
 			}
 		}
-		if(placingQueenBee) {
+		if (placingQueenBee) {
 			currentPlayerData.setQueenBee(currentHiveLabel.getPiece());
 			placingQueenBee = false;
 		}
-		
+
 		board.addPiece(currentHiveLabel.getPiece(), x, y);
 		board.repaint();
 		currentHiveLabel.deactivate();
 		currentHiveLabel = null;
-		if(checkFinishGame(isPlayerAToPlay)) {
+		if (checkFinishGame()) {
 			doFinishGameActions();
 		}
 		changePlayer();
@@ -863,7 +863,7 @@ public class Game extends JFrame {
 				return;
 			}
 		}
-		if(currentPiece != null) {
+		if (currentPiece != null) {
 			board.getBoardPlace(currentPiece.getX(), currentPiece.getY()).setSelected(false);
 			currentPiece = null;
 		}
@@ -906,23 +906,17 @@ public class Game extends JFrame {
 	public boolean canPhysicallyMoveTo(int x, int y, Direction d) {
 		switch (d) {
 		case N:
-			if (canMoveToBorder(x, y - 1))
-				return this.physicalMove(x, y, Direction.NE, Direction.NO);
+			return this.physicalMove(x, y, Direction.NE, Direction.NO);
 		case NE:
-			if (canMoveToBorder(x + 1, y))
-				return this.physicalMove(x, y, Direction.N, Direction.SE);
+			return this.physicalMove(x, y, Direction.N, Direction.SE);
 		case NO:
-			if (canMoveToBorder(x - 1, y))
-				return this.physicalMove(x, y, Direction.N, Direction.SO);
+			return this.physicalMove(x, y, Direction.N, Direction.SO);
 		case S:
-			if (canMoveToBorder(x, y + 1))
-				return this.physicalMove(x, y, Direction.SE, Direction.SO);
+			return this.physicalMove(x, y, Direction.SE, Direction.SO);
 		case SE:
-			if (canMoveToBorder(x + 1, y + 1))
-				return this.physicalMove(x, y, Direction.NE, Direction.S);
+			return this.physicalMove(x, y, Direction.NE, Direction.S);
 		case SO:
-			if (canMoveToBorder(x - 1, y + 1))
-				return this.physicalMove(x, y, Direction.S, Direction.NO);
+			return this.physicalMove(x, y, Direction.S, Direction.NO);
 		default:
 			break;
 		}
@@ -930,15 +924,94 @@ public class Game extends JFrame {
 	}
 
 	private boolean physicalMove(int x, int y, Direction d1, Direction d2) {
-		Point pt1 = Board.getNeighbourPoint(x, y, d1);
-		Point pt2 = Board.getNeighbourPoint(x, y, d2);
+
+		Point pt1 = getTarget(currentPiece.getX(), currentPiece.getY(), d1);
+		Point pt2 = getTarget(currentPiece.getX(), currentPiece.getY(), d2);
 		if (pt1 == null || pt2 == null)
-			return true;
+			return false;
 		Piece p1 = board.getPiece((int) pt1.getX(), (int) pt1.getY());
 		Piece p2 = board.getPiece((int) pt2.getX(), (int) pt2.getY());
-		if (p1 != null && p2 != null)
+		if (p1 != null && p2 != null) {
 			return false;
+		}
+
 		return true;
+	}
+
+	private Point getTarget(int x, int y, Direction d) {
+		int auxX = 0, auxY = 0;
+		Point p = null;
+		switch (d) {
+		case N:
+			if (y == 0)
+				return p;
+			auxX = x;
+			auxY = y - 1;
+			break;
+
+		case NE:
+			if (x % 2 == 0) {
+				if (x == Board.DIMX || y == 0)
+					return p;
+				auxX = x + 1;
+				auxY = y - 1;
+			} else {
+				if (x == Board.DIMX)
+					return p;
+				auxX = x + 1;
+				auxY = y;
+			}
+			break;
+		case NO:
+			if (x % 2 == 0) {
+				if (x == 0 || y == 0)
+					return p;
+				auxX = x - 1;
+				auxY = y - 1;
+			} else {
+				if (x == 0)
+					return p;
+				auxX = x - 1;
+				auxY = y;
+			}
+			break;
+		case S:
+			if (y == Board.DIMY)
+				return p;
+			auxX = x;
+			auxY = y + 1;
+			break;
+		case SE:
+			if (x % 2 == 0) {
+				if (x == Board.DIMX)
+					return p;
+				auxX = x + 1;
+				auxY = y;
+			} else {
+				if (x == Board.DIMX || y == Board.DIMY)
+					return p;
+				auxX = x + 1;
+				auxY = y + 1;
+			}
+			break;
+		case SO:
+			if (x % 2 == 0) {
+				if (x == 0)
+					return p;
+				auxX = x - 1;
+				auxY = y;
+			} else {
+				if (x == 0 || y == 0)
+					return p;
+				auxX = x - 1;
+				auxY = y + 1;
+			}
+			break;
+		default:
+			break;
+		}
+		p = new Point(auxX, auxY);
+		return p;
 	}
 
 	/**
@@ -968,16 +1041,17 @@ public class Game extends JFrame {
 			else
 				playerAData.setPlayerWon(true);
 			return true;
-			
-		}else {
-			if(checkFinishGame(true) && checkFinishGame(false)) {
+
+		} else {
+			if (checkFinishGame(true) && checkFinishGame(false)) {
 				lb_message.setText("Oh my God!! It's a Draw!!!");
-				JOptionPane.showMessageDialog(this, "Oh my God!! It's a Draw!!", "DRAW!", JOptionPane.INFORMATION_MESSAGE, iconMedium);
+				JOptionPane.showMessageDialog(this, "Oh my God!! It's a Draw!!", "DRAW!",
+						JOptionPane.INFORMATION_MESSAGE, iconMedium);
 				return true;
-			}else if(checkFinishGame(true)) {
+			} else if (checkFinishGame(true)) {
 				playerBData.setPlayerWon(true);
 				return true;
-			}else if(checkFinishGame(false)) {
+			} else if (checkFinishGame(false)) {
 				playerAData.setPlayerWon(true);
 				return true;
 			}
@@ -1023,17 +1097,20 @@ public class Game extends JFrame {
 	private void doFinishGameActions() {
 		boolean checkWinner = playerAData.playerWon();
 		String winningPlayer = checkWinner ? "A" : "B";
-		int n = JOptionPane.showConfirmDialog(this, "Congratulations Player " + winningPlayer + "\n Do you want to enter your name?", "Winner Panel",
+		int n = JOptionPane.showConfirmDialog(this,
+				"Congratulations Player " + winningPlayer + "\n Do you want to enter your name?", "Winner Panel",
 				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, iconMedium);
-		
+
 		if (n == JOptionPane.YES_OPTION) {
-			String s = (String) JOptionPane.showInputDialog(this,
-					"Please enter your name", "Player Name",
+			String s = (String) JOptionPane.showInputDialog(this, "Please enter your name", "Player Name",
 					JOptionPane.PLAIN_MESSAGE, iconMedium, null, null);
-			if(s != null) highScore.addScore(s, (checkWinner ? playerAData.getNumberOfMoves() : playerBData.getNumberOfMoves()));
-			else highScore.addScore("Unknown", (checkWinner ? playerAData.getNumberOfMoves() : playerBData.getNumberOfMoves()));
-		} 
-		
+			if (s != null)
+				highScore.addScore(s, (checkWinner ? playerAData.getNumberOfMoves() : playerBData.getNumberOfMoves()));
+			else
+				highScore.addScore("Unknown",
+						(checkWinner ? playerAData.getNumberOfMoves() : playerBData.getNumberOfMoves()));
+		}
+
 		viewScores();
 		lb_message.setText("Winner: Player " + winningPlayer);
 		enableControlButtons(false);

@@ -31,7 +31,7 @@ public class PlayerData {
 	private static Color INACTIVEPLAYERCOLOR = Color.gray;
 
 	/**
-	 * one Queen, two Beetles, two Grasshoppers, three Spiders, three Ants, one Mosquito, one Pillbug and one Ladybug
+	 * one Queen, two Beetles, two Grasshoppers, three Spiders and three Ants
 	 * 
 	 * Don't change this
 	 */
@@ -81,8 +81,8 @@ public class PlayerData {
 		
 		JPanel piecesPanel = new JPanel(new GridLayout(14, 1, 0, 0));
 		for (PiecesAndItsNumber p : ListaDePecas) {
-			Piece addedPiece = p.getTipo().createNew(game, isPlayerA);
 			for (int i = 0; i < p.getnPecas(); i++) {
+				Piece addedPiece = p.getTipo().createNew(game, isPlayerA);
 				HiveLabel pieceLabel = new HiveLabel(addedPiece, game);
 				pieceLabel.setText(pieceLabel.getPiece().getName());
 				pieceLabel.setHorizontalAlignment(SwingConstants.CENTER);

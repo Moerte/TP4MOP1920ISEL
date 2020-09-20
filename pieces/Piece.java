@@ -158,20 +158,20 @@ public abstract class Piece {
 					d1 = Direction.N;
 				else if(toX == fromX && toY > fromY)
 					d1 = Direction.S;
-				else if(toX < fromX && toY <= fromY)
+				else if(toX < fromX && toY < fromY)
 					d1 = Direction.NO;
 				else
 					d1 = Direction.SO;
 			} else {
-				if(toX > fromX && toY <= fromY)
-					d1 = Direction.NE;
-				else if(toX > fromX)
+				if(toX > fromX && toY > fromY)
 					d1 = Direction.SE;
+				else if(toX > fromX)
+					d1 = Direction.NE;
 				else if(toX == fromX && toY < fromY)
 					d1 = Direction.N;
 				else if(toX == fromX && toY > fromY)
 					d1 = Direction.S;
-				else if(toX < fromX && toY >= fromY)
+				else if(toX < fromX && toY > fromY)
 					d1 = Direction.SO;
 				else
 					d1 = Direction.NO;

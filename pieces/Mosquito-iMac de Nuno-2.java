@@ -23,8 +23,8 @@ public class Mosquito extends Piece {
 	/**
 	 * Move this piece to x,y if doesn't violate the rules.
 	 * 
-	 * The Beetle can move only one step and be placed on top on another
-	 * piece(s). Should not violate the one hive rule.
+	 * The Beetle can move only one step and be placed on top on another piece(s).
+	 * Should not violate the one hive rule.
 	 */
 	public boolean moveTo(int x, int y) {
 		if (game.getBoard().getPiece(x, y) != null) {

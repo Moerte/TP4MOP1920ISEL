@@ -27,10 +27,10 @@ public class Grasshopper extends Piece {
 	 * empty places). Should not violate the one hive rule.
 	 */
 	public boolean moveTo(int x, int y) {
-		/*if (game.getBoard().getPiece(x, y) != null) {
+		if (game.getBoard().getPiece(x, y) != null) {
 			game.setStatusInfo("Invalid move - the destiny must be empty");
 			return false;
-		}*/
+		}
 		
 		boolean reachable = false;
 		// execute search for all the coordinates
@@ -51,28 +51,10 @@ public class Grasshopper extends Piece {
 			return false;
 		}
 		
-		/*boolean found = false;
-		for (Direction d : Direction.values()) {
-			Point p = Board.getNeighbourPoint(getX(), getY(), d);
-			if(game.getBoard().getPiece(p.x, p.y) != null) {
-				if(findPlace(getX(), getY(), x, y, d)) {
-					found = true;
-					break;
-				}
-			}
-		}
-		if(!found) {
-			game.setStatusInfo("OPS! Invalid move - The Grasshopper can't move to that position");
-			return false;
-		}*/
-
-
-		// move if one hive rule checked
 		boolean moved = moveWithOnehiveRuleChecked(x, y);
 
 		if (moved) {
 			game.setStatusInfo("The Piece "+ this.getName()+" moved!");
-			System.out.println("Piece " + this + " with (x,y) of (" + getX() + ", " + getY() + ") moved to (" + x + ", " + y + ")");
 			game.moveUnconditional(this, x, y);
 			return true;
 		}

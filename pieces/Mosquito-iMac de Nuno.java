@@ -30,28 +30,21 @@ public class Mosquito extends Piece {
 		if (game.getBoard().getPiece(x, y) != null) {
 			return false;
 		}
+
 		boolean reachable = false;
 		// execute search for all the coordinates
 		for (Direction direc : Direction.values()) {
 			Point p = Board.getNeighbourPoint(getX(), getY(), direc);
 			if (p == null)
 				continue;
-			if (p.getX() == x && p.getY() == y) {
+			if(p.getX() == x && p.getY() == y) {
 				reachable = true;
 				break;
 			}
 		}
-		if (!reachable)
-			return false;
-		Direction direc = Piece.getDirection(getX(), getY(), x, y);
-
-		boolean canMove = game.canPhysicallyMoveTo(x, y, direc);
+		if(!reachable) return false;
 		// move if one hive rule checked
-		boolean moved = false;
-		if (canMove) {
-			moved = moveWithOnehiveRuleChecked(x, y);
-		}
-		
+		boolean moved = moveWithOnehiveRuleChecked(x, y);
 		if (moved) {
 			game.moveUnconditional(this, x, y);
 		}

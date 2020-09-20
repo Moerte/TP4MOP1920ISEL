@@ -34,7 +34,6 @@ public class Ladybug extends Piece {
 					reachable = true;
 					break;
 				}
-				
 			}
 		}	
 		if (!reachable) {
@@ -45,10 +44,8 @@ public class Ladybug extends Piece {
 
 		// move if one hive rule checked
 		boolean moved = moveWithOnehiveRuleChecked(x, y);
-
 		if (moved) {
 			game.setStatusInfo("The Piece "+ this.getName()+" moved!");
-			System.out.println("Piece " + this + " with (x,y) of (" + getX() + ", " + getY() + ") moved to (" + x + ", " + y + ")");
 			game.moveUnconditional(this, x, y);
 			return true;
 		}
@@ -62,9 +59,16 @@ public class Ladybug extends Piece {
 	
 		
 		if(game.getBoard().getPiece(x, y) != null) {
-			if((endX == x + 1 || endX == x - 1) && endY == y - 2) return true;
-
-			else return false;			
+			if(x % 2 != 0) {
+				if((endX == x + 1 || endX == x - 1) && endY == y - 2) return true;
+	
+				else return false;			
+			}
+			else {
+				if((endX == x + 1 || endX == x - 1) && endY == y - 3) return true;
+	
+				else return false;	
+			}
 		}
 		if(toGo((int)Board.getNeighbourPoint(x, y, direc).x, Board.getNeighbourPoint(x, y, direc).y, endX, endY, direc)) return true;
 		

@@ -59,7 +59,7 @@ public class Board extends JPanel {
 	 */
 	private void initBoard() {
 		setBackground(BOARDBACKGROUNDCOLOR);
-
+		setFont(piecesFont);
 		for (int y = 0; y < DIMY; y++) {
 			for (int x = 0; x < DIMX; x++) {
 				board[x][y] = new BoardPlace(this, x, y);
@@ -280,7 +280,6 @@ public class Board extends JPanel {
 		int nPieces = playerAData.getNumberOfPiecesOnBoard() + playerBData.getNumberOfPiecesOnBoard();
 		List<Piece> l = new ArrayList<Piece>();
 		this.getPiecesFromThisPoint(x, y, l);
-		System.out.println("Teste JustOneHive: "+(l.size() == nPieces)+ " l.size => " + l.size() + " nPecas => "+ (nPieces));
 		return l.size() == nPieces;
 	}
 
@@ -290,14 +289,12 @@ public class Board extends JPanel {
 	 */
 	private void getPiecesFromThisPoint(int x, int y, List<Piece> pieces) {
 		ArrayList<Piece> pieceList = board[x][y].getList();
-		ArrayList<Piece> pieceCordinates;
-		
 		for (Piece p : pieceList) {
-			 
 			pieces.add(p);
 		}
 		for (Direction d : Direction.values()) {
 			Point point = getNeighbourPoint(x, y, d);
+			if(point == null) continue;
 			Piece p2 = board[point.x][point.y].getPiece();
 			if (p2 != null && !pieces.contains(p2)) {
 				getPiecesFromThisPoint(point.x, point.y, pieces);

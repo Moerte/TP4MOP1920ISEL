@@ -45,11 +45,16 @@ public class PillBug extends Piece {
 				}
 				if (!reachable)
 					return false;
+				
+				Direction direc = Piece.getDirection(getX(), getY(), x, y);
+				
+				boolean canMove = game.canPhysicallyMoveTo(x, y, direc);
 				// move if one hive rule checked
-				boolean moved = moveWithOnehiveRuleChecked(x, y);
+				boolean moved = false;
+				if(canMove) {
+					moved = moveWithOnehiveRuleChecked(x, y);
+				}
 				if (moved) {
-					System.out.println("Piece " + this + " with (x,y) of (" + getX() + ", " + getY() + ") moved to ("
-							+ x + ", " + y + ")");
 					game.moveUnconditional(this, x, y);
 				}
 
@@ -59,15 +64,17 @@ public class PillBug extends Piece {
 					Point p = Board.getNeighbourPoint(posX, posY, direc);
 					if (p == null)
 						continue;
-					boolean moved = moveWithOnehiveRuleChecked(x, y);
+					
+					int originalX = piece.getX(), originalY = piece.getY();
+					game.moveUnconditional(piece, getX(), getY());
+					boolean moved = game.getBoard().justOneHive(getX(), getY());
+					if(!moved) game.moveUnconditional(piece, originalX, originalY);
 
-					if (/*x == p.x && y == p.y &&*/(game.getLastMoved() == null || !game.getLastMoved().equals(piece)) && moved) {
-						System.out.println("Moved: "+moved + " And: Num Pieces: "+ game.getBoard().getBoardPlace(x, y).getNumPieces());
+					if (x == p.x && y == p.y &&(game.getLastMoved() == null || !game.getLastMoved().equals(piece)) && moved) {
 						if (game.getBoard().getBoardPlace(x, y).getNumPieces() > 2)
 							return false;
 						currentHolding = piece; 
-						System.out.println("Teste " +currentHolding);
-						pickupPiece(currentHolding, posX, posY);
+						game.getBoard().repaint();
 						return false;
 					}
 				}
@@ -91,13 +98,6 @@ public class PillBug extends Piece {
 			return true;
 		}
 		return false;
-	}
-
-	private void pickupPiece(Piece holdingPiece, int pX, int pY) {
-		game.getBoard().remPiece(holdingPiece);
-		game.getBoard().addPiece(holdingPiece, pX, pY);
-		game.getBoard().repaint();
-
 	}
 	
 	private void dropPiece(Piece holdingPiece,int x,int y) {

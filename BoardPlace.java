@@ -1,7 +1,6 @@
 package tps.tp4;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Polygon;
 import java.util.ArrayList;
@@ -112,7 +111,7 @@ public class BoardPlace {
 	 * remove piece P if it is on tail
 	 */
 	public boolean remPiece(Piece p) {
-		if(pieces.get(pieces.size() - 1) == p) {
+		if(pieces.get(pieces.size() - 1).equals(p)) {
 			pieces.remove(pieces.size() - 1);
 			return true;
 		}
@@ -223,11 +222,13 @@ public class BoardPlace {
 			Piece p = this.getPiece();
 			this.remPiece(p);
 			bp.addPiece(p);
+			p.setXY(bp.x, bp.y);
 		} else {
 			Deque<Piece> stack = new LinkedList<Piece>();
 			while(pieces.size() > 0) {
 				Piece p = this.getPiece();
 				this.remPiece(p);
+				p.setXY(bp.x, bp.y);
 				stack.add(p);
 			}
 			while(!stack.isEmpty()) {
@@ -251,7 +252,6 @@ public class BoardPlace {
 			g.fillPolygon(polygon);
 			if(getPiece().isFromPlayerA()) g.setColor(Color.BLACK);
 			else g.setColor(Color.LIGHT_GRAY);
-			g.setFont(new Font("default", Font.BOLD, 14));
 			g.drawString(String.valueOf(getPiece().getClass().getSimpleName().charAt(0)), baseX+7, baseY+17);
 			
 		}
@@ -259,7 +259,6 @@ public class BoardPlace {
 		// if selected, draw selection
 		if (isSelected()) {
 			g.setColor(PIECESELECTIONCOLOR);
-			//g.fillPolygon(selPolygon);
 			g.drawPolygon(polygon);
 		}
 	}

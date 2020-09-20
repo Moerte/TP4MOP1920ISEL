@@ -13,7 +13,6 @@ import tps.tp4.Game.Direction;
 public class Beetle extends Piece {
 	final static private Color color = Color.magenta;
 
-	private boolean isAbove;
 
 	/**
 	 * constructor
@@ -42,16 +41,16 @@ public class Beetle extends Piece {
 		}
 		if (!reachable)
 			return false;
-		if (game.getBoard().getPiece(x, y) != null) {
-			if (!isAbove) {
-				game.getPlayerData(this.isFromPlayerA());
-			}
-		}
+		
+		Direction direc = Piece.getDirection(getX(), getY(), x, y);
+		
+		boolean canMove = game.canPhysicallyMoveTo(x, y, direc);
 		// move if one hive rule checked
-		boolean moved = moveOneCheckedStep(x, y);
+		boolean moved = false;
+		if(canMove) {
+			moved = moveWithOnehiveRuleChecked(x, y);
+		}
 		if (moved) {
-			System.out.println("Piece " + this + " with (x,y) of (" + getX() + ", " + getY() + ") moved to (" + x + ", "
-					+ y + ")");
 			game.moveUnconditional(this, x, y);
 		}
 		return moved;

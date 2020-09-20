@@ -46,7 +46,8 @@ public class HighscoreManager {
         updateScoreFile();
     }
     
-    public void loadScoreFile() {
+    @SuppressWarnings("unchecked")
+	public void loadScoreFile() {
         try {
             inputStream = new ObjectInputStream(new FileInputStream(HIGHSCORE_FILE));
             scores = (ArrayList<Score>) inputStream.readObject();
@@ -73,7 +74,7 @@ public class HighscoreManager {
             outputStream = new ObjectOutputStream(new FileOutputStream(HIGHSCORE_FILE));
             outputStream.writeObject(scores);
         } catch (FileNotFoundException e) {
-            System.out.println("Update FNF Error: " + e.getMessage() + ",the program will try and make a new file");
+            System.out.println("Update FNF Error: " + e.getMessage() + ", the file will be created");
         } catch (IOException e) {
             System.out.println("Update IO Error: " + e.getMessage());
         } finally {
