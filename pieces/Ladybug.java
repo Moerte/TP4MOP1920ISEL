@@ -60,12 +60,22 @@ public class Ladybug extends Piece {
 		
 		if(game.getBoard().getPiece(x, y) != null) {
 			if(x % 2 != 0) {
-				if((endX == x + 1 || endX == x - 1) && endY == y - 2) return true;
-	
+				if((endX == x + 1 || endX == x - 1) && endY == y - 1) return true; //para N
+				if(endY == y + 3 && endX == x) return true; //para S
+				if(endX == x + 2 && endY == y) return true; // para NE
+				if(endX == x - 2 && endY == y) return true; // para NO
+				if(endX == x + 2 && endY == y + 2) return true; //para SE
+				if(endX == x - 2 && endY == y + 2) return true; //para SO
+					
 				else return false;			
 			}
 			else {
-				if((endX == x + 1 || endX == x - 1) && endY == y - 3) return true;
+				if((endX == x + 1 || endX == x - 1) && endY == y - 2) return true; //para N
+				if(endY == y + 3 && endX == x) return true; //para S
+				if(endX == x + 2 && endY == y) return true; //para NE
+				if(endX == x - 2 && endY == y) return true; //para NO
+				if(endX == x + 2 && endY == y + 2) return true; //para SE
+				if(endX == x - 2 && endY == y + 2) return true; //para SO
 	
 				else return false;	
 			}
